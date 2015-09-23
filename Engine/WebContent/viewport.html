@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>权限管理系统 V1.1</title>
+<style type="text/css">
+#loading {
+	position: absolute;
+	left: 40%;
+	top: 40%;
+	padding: 2px;
+	z-index: 20001;
+	height: auto;
+}
+
+#loading a {
+	color: #225588;
+}
+
+#loading .loading-indicator {
+	background: white;
+	color: #444;
+	font: bold 13px tahoma, arial, helvetica;
+	padding: 10px;
+	margin: 0;
+	height: auto;
+}
+
+#loading-msg {
+	font: normal 10px arial, tahoma, sans-serif;
+}
+</style>
+ 	 <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css" />
+     <link rel="stylesheet" type="text/css" href="css/flying.css" />
+     <link rel="stylesheet" type="text/css" href="extjs/ux/desktop/css/desktop.css" />
+	 <link rel="stylesheet" type="text/css" href="extjs/resources/css/multiselect.css" />
+</head>
+<body>
+	<div id="loading">
+		<div class="loading-indicator">
+			<img src="img/loading32.gif" width="31" height="31"
+				style="margin-right: 8px; float: left; vertical-align: top;" />
+			权限管理系统 V1.1 <br /> <span id="loading-msg">加载样式和图片...</span>
+		</div>
+	</div>
+	<div id="bd">
+	<script type="text/javascript">
+		document.getElementById('loading-msg').innerHTML = '加载核心...';
+	</script>
+	<script type="text/javascript" src="extjs/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="extjs/adapter/ext/ext-basex.js"></script>
+	<script type="text/javascript">
+		document.getElementById('loading-msg').innerHTML = '加载UI组件...';
+	</script>
+	<script type="text/javascript" src="extjs/ext-all-debug.js"></script>
+	<script type="text/javascript">
+		document.getElementById('loading-msg').innerHTML = '模块初始化...';
+	</script>
+	<script type="text/javascript" src="js/face/FlyingCommonFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingEmailFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingPermissionFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingFaces.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowFormFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowAuditFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowShowFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingSubSystemFace.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-init.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-core.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-grid.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-tab.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-toolbar.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-tree.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-TreeLoader.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-menu.js"></script>
+	<script type="text/javascript" src="extjs/ux/ItemSelector.js"></script>
+	<script type="text/javascript" src="extjs/ux/MultiSelect.js"></script>
+	<script type="text/javascript" src="extjs/ux/DDView.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-message.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-task.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-keditor.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-datepicker.js"></script>
+	<script type="text/javascript" src="extjs/locale/ext-lang-zh_CN.js"></script>
+	
+	<script type="text/javascript" src="extjs/ux/kindeditor/kindeditor.js"></script>
+    <script type="text/javascript" src="extjs/ux/datepicker/WdatePicker.js"></script>
+     
+    <!-- treeLoader -->
+    <script type="text/javascript" src="extjs/ux/flying-TreeLoader.js"></script>
+    <!-- 选部门控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-departmentselection.js"></script>
+    <!-- 选人员控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-personselection.js"></script>
+    <!-- 树布局控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-treelayout.js"></script>
+    <!-- 多文件上传 -->
+    <link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/index.css">
+	<link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/icons.css">
+ 	<link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/UploadDialog.css" />
+    <script type="text/javascript" src="extjs/ux/fileupload/swfupload.js"></script>
+	<script type="text/javascript" src="extjs/ux/fileupload/UploadDialog.js"></script>
+	
+	<script type="text/javascript" src="js/main_remote.js"></script>
+	</div>
+	<div id="header">
+		<h1>权限管理系统 V1.1</h1>
+	</div>
+</body>
+</html>

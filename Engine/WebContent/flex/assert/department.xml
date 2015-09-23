@@ -1,0 +1,13 @@
+<nodes>
+	<node id="001" text="组织部" type="role">
+		<node id="001001" text="张三"/>
+		<node id="001002" text="李四"/>
+	</node>
+	<node id="002" text="宣传部" type="role">
+		<node id="002001" text="王五"/>
+		<node id="002002" text="赵六"/>
+	</node>	
+	<node id="003" text="人事部"/>
+	<node id="004" text="李雷" />
+	<node id="004" text="韩梅梅" />
+</nodes>

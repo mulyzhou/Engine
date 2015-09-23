@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="T_BASE_FIELD">
+	<!--ibatic注册
+	sql-map-config.xml 的注册字符串： <sqlMap resource="com/flying/dao/xml/T_BASE_FIELD.xml" />
+	-->
+	<!--数据库注册
+	注册到数据库 ： INSERT INTO T_BASE_CONFIG(CDMC,YWMC,ZXSQLID) VALUE('字段管理','T_BASE_FIELD','T_BASE_FIELD.selectAll');
+	-->
+    <!--字段管理配置文件开始-->
+    <!--别名-->
+        <typeAlias alias="result" type="java.util.HashMap" />
+        <typeAlias alias="param" type="java.util.HashMap" />
+
+    <!-- 查询-->
+    <select id="selectAll"  parameterClass="param" resultClass="result">
+    	SELECT A.ZDID,A.ZDMC,A.ZDLX,A.ZDCD,A.SFZJ,A.SFWK,A.MRZ,A.ZDZS FROM T_BASE_FIELD A 
+    	<isNotEmpty prepend="WHERE" property="filter">
+    		    	$filter$
+    	</isNotEmpty>
+    	<isNotEmpty prepend="" property="order">
+	    			$order$
+	    </isNotEmpty>
+	    <isEmpty prepend="" property="order">
+	   		ORDER BY ZDID  DESC
+	    </isEmpty>
+    	<isNotEmpty prepend="" property="start">
+    		    	LIMIT #start#,#limit#
+    	</isNotEmpty>
+    </select>
+    <select id="selectAllTotal" parameterClass="param" resultClass="int">
+    	SELECT COUNT(1) FROM T_BASE_FIELD A 
+    	<isNotEmpty prepend="WHERE" property="filter">
+    		    	$filter$
+    	</isNotEmpty>
+    </select>
+    <select id="selectByBid" parameterClass="param" resultClass="result">
+    	SELECT A.ZDID,A.ZDMC,A.ZDLX,A.ZDCD,A.SFZJ,A.SFWK,A.MRZ,A.ZDZS FROM T_BASE_FIELD A WHERE A.BID = #BID#
+    </select>
+     <select id="selectByBmc" parameterClass="param" resultClass="result">
+    	SELECT A.ZDID,A.ZDMC,A.ZDLX,A.ZDCD,A.SFZJ,A.SFWK,A.MRZ,A.ZDZS FROM T_BASE_FIELD A ,T_BASE_TABLE B WHERE A.BID = B.BID AND B.BMC = #BMC#
+    </select>
+    <select id="selectById" resultClass="result">
+    	SELECT A.ZDID,A.ZDMC,A.ZDLX,A.ZDCD,A.SFZJ,A.SFWK,A.MRZ,A.ZDZS FROM T_BASE_FIELD A WHERE A.ZDID = #ZDID#
+    </select>
+    <!--插入-->
+	<insert id="insert" parameterClass="param">
+		INSERT INTO T_BASE_FIELD(ZDMC,ZDLX,ZDCD,SFZJ,SFWK,MRZ,ZDZS,BID) 
+		VALUES (#ZDMC#,#ZDLX#,#ZDCD#,#SFZJ#,#SFWK#,#MRZ#,#ZDZS#,#BID#)
+		<selectKey  resultClass ="int"  keyProperty ="ID" >   
+         <![CDATA[ SELECT LAST_INSERT_ID() AS ID  ]]>     
+        </selectKey > 
+    </insert>
+    <!--删除-->
+    <delete id="delete" parameterClass="param">
+		DELETE FROM T_BASE_FIELD WHERE ZDID = #ZDID#
+	</delete>
+	<delete id="deleteByBmc" parameterClass="param">
+		DELETE FROM T_BASE_FIELD WHERE BID IN (SELECT BID FROM T_BASE_TABLE WHERE BMC = #BMC#)
+	</delete>
+    <!--更新-->
+	<update id="update" parameterClass="param">
+		UPDATE  T_BASE_FIELD SET ZDMC = #ZDMC#,ZDLX = #ZDLX#,ZDCD = #ZDCD#,SFZJ = #SFZJ#,SFWK = #SFWK#,MRZ = #MRZ#,ZDZS = #ZDZS#
+		WHERE ZDID = #ZDID#
+	</update> 
+	<!-- 获取某张表的非主键字段集合 -->
+	<select id="getFieldWithoutPk" parameterClass="param" resultClass="result">
+		SELECT A.ZDID,A.ZDMC,A.ZDLX,A.ZDCD,A.SFZJ,A.SFWK,A.MRZ,A.ZDZS FROM T_BASE_FIELD A ,T_BASE_TABLE B WHERE A.BID = B.BID AND A.SFZJ =0 AND B.BMC = #BMC#
+	</select>
+</sqlMap>

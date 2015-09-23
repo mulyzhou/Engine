@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects>
+	<object id="httpHost">
+		<property value="localhost" name="ip" />
+		<property value="8080" name="port" />
+		<property value="Engine" name="path" />
+	</object>
+</objects>

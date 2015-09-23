@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlMapImport>
+	<sqlMap resource="sql/core/oracle/init.xml" />
+	<sqlMap resource="sql/core/oracle/oracle.xml" />
+	<sqlMap resource="sql/core/oracle/T_BASE_FIELD.xml" />
+	<sqlMap resource="sql/core/oracle/T_BASE_TABLE.xml" />
+	<sqlMap resource="sql/core/oracle/T_BASE_FOREIGNKEY.xml" />
+	<sqlMap resource="sql/core/oracle/T_BASE_STATICS.xml" />
+	<sqlMap resource="sql/core/oracle/T_BASE_LOG.xml" />
+</sqlMapImport>

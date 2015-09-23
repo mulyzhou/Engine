@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="T_BASE_TABLE">
+	<!--ibatic注册
+	sql-map-config.xml 的注册字符串： <sqlMap resource="com/flying/dao/xml/T_BASE_TABLE.xml" />
+	-->
+	<!--数据库注册
+	注册到数据库 ： INSERT INTO T_BASE_CONFIG(CDMC,YWMC,ZXSQLID) VALUE('表管理','T_BASE_TABLE','T_BASE_TABLE.selectAll');
+	-->
+    <!--表管理配置文件开始-->
+    <!--别名-->
+        <typeAlias alias="result" type="java.util.HashMap" />
+        <typeAlias alias="param" type="java.util.HashMap" />
+
+    <!-- 查询-->
+    <select id="selectAll"  parameterClass="param" resultClass="result">
+    	SELECT A.BID,A.BMC,A.BZS,A.BMS,A.X,A.Y,A.HEIGHT,A.WIDTH,A.STATE FROM T_BASE_TABLE A 
+    	<isNotEmpty prepend="WHERE" property="filter">
+    		    	$filter$
+    	</isNotEmpty>
+    	<isNotEmpty prepend="" property="order">
+	    			$order$
+	    </isNotEmpty>
+	    <isEmpty prepend="" property="order">
+	   		ORDER BY BID  DESC
+	    </isEmpty>
+    	<isNotEmpty prepend="" property="start">
+    		    	LIMIT #start#,#limit#
+    	</isNotEmpty>
+    </select>
+    <select id="selectAllTotal" parameterClass="param" resultClass="int">
+    	SELECT COUNT(1) FROM T_BASE_TABLE A 
+    	<isNotEmpty prepend="WHERE" property="filter">
+    		    	$filter$
+    	</isNotEmpty>
+    </select>
+    <select id="selectById" resultClass="result">
+    	SELECT A.BID,A.BMC,A.BZS,A.BMS,A.X,A.Y,A.HEIGHT,A.WIDTH,A.STATE FROM T_BASE_TABLE A WHERE A.BID = #BID#
+    </select>
+	<select id="selectByBmc" parameterClass="param" resultClass="result">
+		SELECT A.BID,A.BMC,A.BZS,A.BMS,A.X,A.Y,A.HEIGHT,A.WIDTH,A.STATE FROM T_BASE_TABLE A WHERE A.BMC = #BMC#
+	</select>
+    <!--插入-->
+	<insert id="insert" parameterClass="param">
+		INSERT INTO T_BASE_TABLE(BMC,BZS,BMS,X,Y,HEIGHT,WIDTH,STATE) 
+		VALUES (#BMC#,#BZS#,#BMS#,#X#,#Y#,#HEIGHT#,#WIDTH#,#STATE#)
+		<selectKey  resultClass ="int"  keyProperty ="ID" >   
+         <![CDATA[ SELECT LAST_INSERT_ID() AS ID  ]]>     
+        </selectKey > 
+    </insert>
+    
+    <!--删除-->
+    <delete id="delete" parameterClass="param">
+		DELETE FROM T_BASE_TABLE WHERE BID = #BID#
+	</delete>
+	<delete id="deleteByBmc" parameterClass="param">
+		DELETE FROM T_BASE_TABLE WHERE BMC = #BMC#
+	</delete>
+    <!--更新-->
+	<update id="update" parameterClass="param">
+		UPDATE  T_BASE_TABLE SET BMC = #BMC#,BZS = #BZS#,BMS = #BMS#,X = #X#,Y = #Y#,HEIGHT = #HEIGHT#,WIDTH = #WIDTH#,STATE = #STATE#
+		WHERE BID = #BID#
+	</update> 
+</sqlMap>

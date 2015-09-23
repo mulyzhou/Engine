@@ -1,0 +1,167 @@
+a {
+	color: #15428B;
+}
+
+a:link,a:visited {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#header {
+	background: #7F99BE url(../img/layout-browser-hd-bg.gif) repeat-x
+		center;
+	visibility: hidden;
+}
+
+#header h1 {
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+	padding: 5px 10px;
+}
+
+.start-bg {
+	background-image: url(../img/bg.jpg);
+}
+
+.icon-nav {
+	background-image: url(../img/folder_go.png) !important;
+}
+
+.icon-settings {
+	background-image: url(../img/folder_wrench.png) !important;
+}
+
+.icon-add {
+	background-image: url(../img/add.gif) !important;
+}
+.icon-accept {
+	width: 75px !important;
+	background-image: url(../img/accept.png) !important;
+}
+
+.icon-edit {
+	background-image: url(../img/edit.gif) !important;
+}
+.icon-del {
+	background-image: url(../img/del.gif) !important;
+}
+.icon-delete {
+	width: 75px !important;
+	background-image: url(../img/delete.gif) !important;
+}
+.icon-refresh {
+	background-image: url(../img/refresh.gif) !important;
+}
+
+.icon-download {
+	background-image: url(../img/download.gif) !important;
+}
+.icon-del-gray {
+	background-image: url(../img/del_gray.gif) !important;
+}
+
+.icon-search {
+	background-image: url(../img/search.gif) !important;
+}
+
+.icon-grid {
+	background-image: url(../img/grid.png) !important;
+}
+.icon-plugin {
+	background-image: url(../img/plugin.gif) !important;
+}
+
+.icon-info {
+	background-image: url(../img/Earth.gif) !important;
+}
+.icon-exit {
+	background-image: url(../img/Exit.gif) !important;
+}
+.icon-upload {
+	background: url(../image_add.png) no-repeat 0 0 !important;
+}
+.icon-search {
+	background-image: url(../img/search.gif) !important;
+}
+.icon-home1 {
+	background-image: url(../img/home.png) !important;
+}
+.icon-sysmanage {
+	background-image: url(../img/sysmanage.png) !important;
+}
+.add {
+	background-image: url(../img/user_add.png) !important;
+}
+
+.delete {
+	background-image: url(../img/user_delete.png) !important;
+}
+
+.csh {
+	background: url(../img/user_edit.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+.blank{
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+.open {
+	background: url(../img/user_go.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+
+.close {
+	background: url(../img/user_red.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+
+.icon-gray {
+	background: url(../img/user_gray.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+
+.icon-green {
+	background: url(../img/user_green.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+
+.icon-orange {
+	background: url(../img/user_orange.png) no-repeat;
+	width: 16px;
+	height: 18px;
+	vertical-align: middle;
+	display: inline-block
+}
+
+/*-----------*/
+.x-grid3-row-body p {
+	margin: 5px 5px 10px 5px !important;
+}
+
+body,td,th {
+	font-family:
+		'Geneva, Arial, Helvetica, sans-serif,lucida grande, tahoma, arial, sans-serif'
+		;
+	font-size: 12px;
+}

@@ -1,0 +1,26 @@
+<nodes>
+	<node id="deploy">
+		<value>http://localhost:8888/security-jbpm/sendAction.action</value>
+	</node>
+	<node id="viewPic">
+		<value>http://localhost:8888/security-jbpm/viewPic.action</value>
+	</node>
+	<node id="viewProcess">
+		<value>http://localhost:8888/security-jbpm/viewProcess.action?execution="%E9%A9%B3%E5%9B%9E.1150001"</value>
+	</node>
+	<node id="getFormInfo">
+		<value>http://localhost:8888/security-jbpm/allFormData.action</value>
+	</node>
+	<node id="userDepartmentList">
+		<value>http://localhost:8888/security-jbpm/userDepartmentList.action</value>
+	</node>
+	<node id="listPublicGroup"> 
+		<value>http://localhost:8888/security-jbpm/listPublicGroup.action</value>
+	</node>
+	<node id="groupMemberpath">
+		<value>http://localhost:8888/security-jbpm/viewGroupmember.action</value>
+	</node>
+	<node id="getRole">
+		<value>http://localhost:8888/security-jbpm/getAllRoles.action</value>
+	</node>
+</nodes>

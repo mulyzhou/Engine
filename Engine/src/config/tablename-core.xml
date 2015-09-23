@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tablename author="zdf">
+	<whiteList>
+		<logout-whiteList-item name="T_BASE_TABLE.space" />
+		<logout-whiteList-item name="T_BASE_TABLE.deleteByBmc" />
+	</whiteList>
+	<interceptors>
+		<interceptor-stack name="insertInterceptor">
+			<interceptor
+				class="com.flying.Interceptor.impl.BooleanParameterSwitchInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.NullParameterSwitchInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.DateParameterSwitchInterceptor" />
+		</interceptor-stack>
+		<interceptor-stack name="updateInterceptor">
+			<interceptor class="com.flying.Interceptor.impl.UpdateInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.BooleanParameterSwitchInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.NullParameterSwitchInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.DateParameterSwitchInterceptor" />
+		</interceptor-stack>
+	</interceptors>
+	<item name="init" alias="一些通用操作" load="true">
+		<op alias="系统通用删除操作" sqlid="init.batchDelete" type="space">
+			<interceptor class="com.flying.Interceptor.impl.BatchDeleteInterceptor" />
+		</op>
+	</item>
+	<item name="oracle" alias="oracle字典表" load="true">
+		<op alias="查询表信息" sqlid="oracle.selectTableByBmc" type="object" />
+		<op alias="查询字段信息" sqlid="oracle.selectFieldByBmc" type="list" />
+		<op alias="查询外键信息 " sqlid="oracle.selectByZbzd" type="list" />
+	</item>
+	<item name="mysql" alias="mysql字典表" load="true">
+		<op alias="查询表信息" sqlid="mysql.selectTableByBmc" type="object" />
+		<op alias="查询字段信息" sqlid="mysql.selectFieldByBmc" type="list" />
+		<op alias="查询外键信息 " sqlid="mysql.selectByZbzd" type="list" />
+	</item>
+	<item name="T_BASE_TABLE" alias="表管理" load="true">
+		<op alias="添加【表信息】" sqlid="T_BASE_TABLE.insert" type="insert">
+			<interceptor-ref name="insertInterceptor" />
+		</op>
+		<op alias="修改【表信息】" sqlid="T_BASE_TABLE.update" type="update">
+			<interceptor-ref name="updateInterceptor" />
+		</op>
+		<op alias="根据ID删除【表信息】" sqlid="T_BASE_TABLE.delete" type="delete" />
+		<op alias="查询【表信息】所有数据" sqlid="T_BASE_TABLE.selectAll" type="list" />
+		<op alias="查询【表信息】通过ID查询" sqlid="T_BASE_TABLE.selectById" type="object" />
+		<op alias="提交数据库设计" sqlid="T_BASE_TABLE.space" type="space">
+			<interceptor class="com.flying.Interceptor.impl.ParseTableXmlInterceptor" />
+			<interceptor class="com.flying.Interceptor.impl.CreateTableInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.CreateForeignKeyInterceptor" />
+		</op>
+		<op alias="建立子系统" sqlid="T_BASE_TABLE.import" type="space">
+			<interceptor class="com.flying.Interceptor.impl.SubImportConfigInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.SubImportParseTableXmlInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.SubImportCreateTableInterceptor" />
+			<interceptor
+				class="com.flying.Interceptor.impl.SubImportCreateForeignKeyInterceptor" />
+		</op>
+		<op alias="根据表名删除" sqlid="T_BASE_TABLE.deleteByBmc" type="delete">
+			<interceptor alias="删除拦截"
+				class="com.flying.Interceptor.impl.DeleteTableInterceptor" />
+		</op>
+		<op alias="上传" sqlid="T_BASE_TABLE.upload" type="space" />
+		<op alias="获取所有表数据的xml" sqlid="T_BASE_TABLE.selectAllOfXml" type="space">
+			<interceptor class="com.flying.Interceptor.impl.SelectAllOfXmlInterceptor" />
+		</op>
+	</item>
+	<item name="T_BASE_FIELD" alias="字段管理" load="true">
+		<op alias="添加【字段信息】" sqlid="T_BASE_FIELD.insert" type="insert">
+			<interceptor-ref name="insertInterceptor" />
+		</op>
+		<op alias="修改【字段信息】" sqlid="T_BASE_FIELD.update" type="update">
+			<interceptor-ref name="updateInterceptor" />
+		</op>
+		<op alias="根据ID删除【字段信息】" sqlid="T_BASE_FIELD.delete" type="delete" />
+		<op alias="查询【字段信息】所有数据" sqlid="T_BASE_FIELD.selectAll" type="map" />
+		<op alias="查询【字段信息】通过ID查询" sqlid="T_BASE_FIELD.selectById" type="object" />
+		<op alias="根据表ID查询" sqlid="T_BASE_FIELD.selectByBid" type="list" />
+		<op alias="根据表名查询" sqlid="T_BASE_FIELD.selectByBmc" type="list" />
+		<op alias="根据表名删除字段" sqlid="T_BASE_FIELD.deleteByBmc" type="delete" />
+		<op alias="表字段批量更新" sqlid="T_BASE_FIELD.batchUpdate" type="space">
+			<interceptor
+				class="com.flying.Interceptor.impl.FieldBatchUpdateInterceptor" />
+		</op>
+	</item>
+	<item name="T_BASE_FOREIGNKEY" alias="外键管理" load="true">
+		<op alias="获取一张表的关系表" sqlid="T_BASE_FOREIGNKEY.relationTable" type="list">
+			<interceptor class="com.flying.Interceptor.impl.RelationTableInterceptor" />
+		</op>
+		<op alias="通过外键名称，表名获取主表名称" sqlid="T_BASE_FOREIGNKEY.selectByWbzd"
+			type="list" />
+		<op alias="通过主表名称，表名获取外键名称" sqlid="T_BASE_FOREIGNKEY.selectByZbzd"
+			type="list" />
+		<op alias="获取一张表的外表" sqlid="T_BASE_FOREIGNKEY.RelationTableOfwb"
+			type="list" />
+		<op alias="根据表名删除外键" sqlid="T_BASE_FOREIGNKEY.deleteByBmc" type="delete" />
+	</item>
+	<item name="T_BASE_STATICS" alias="报表语句" load="true">
+		<op alias="添加" sqlid="T_BASE_STATICS.insert" type="insert">
+			<interceptor class="com.flying.Interceptor.impl.CreateStaticsInterceptor" />
+		</op>
+		<op alias="修改" sqlid="T_BASE_STATICS.update" type="update">
+			<interceptor class="com.flying.Interceptor.impl.CreateStaticsInterceptor" />
+		</op>
+		<op alias="删除" sqlid="T_BASE_STATICS.delete" type="delete">
+			<interceptor class="com.flying.Interceptor.impl.DeleteStaticsInterceptor" />
+		</op>
+		<op alias="根据sqlid删除" sqlid="T_BASE_STATICS.deleteBySqlid" type="delete">
+			<interceptor
+				class="com.flying.Interceptor.impl.DeleteStaticsBySqlidInterceptor" />
+		</op>
+		<op alias="查询所有" sqlid="T_BASE_STATICS.selectAll" type="map" />
+		<op alias="根据ID查找" sqlid="T_BASE_STATICS.selectById" type="object" />
+		<op alias="根据sqlid查找" sqlid="T_BASE_STATICS.selectBySqlid" type="object">
+			<interceptor class="com.flying.Interceptor.impl.GetStaticsInterceptor" />
+		</op>
+	</item>
+	<item name="T_BASE_LOG" alias="系统日志表" load="true">
+		<op alias="添加【系统日志表】" sqlid="T_BASE_LOG.insert" type="insert">
+			<interceptor-ref name="insertInterceptor" />
+		</op>
+		<op alias="修改【系统日志表】" sqlid="T_BASE_LOG.update" type="update">
+			<interceptor-ref name="updateInterceptor" />
+		</op>
+		<op alias="根据ID删除【系统日志表】" sqlid="T_BASE_LOG.delete" type="delete" />
+		<op alias="查询【系统日志表】所有数据" sqlid="T_BASE_LOG.selectAll" type="map" />
+		<op alias="查询【系统日志表】通过ID查询" sqlid="T_BASE_LOG.selectById" type="object" />
+	</item>
+</tablename>

@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Desktop</title>
+     <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css" />
+     <link rel="stylesheet" type="text/css" href="css/flying.css" />
+     <link rel="stylesheet" type="text/css" href="extjs/ux/desktop/css/desktop.css" />
+	 <link rel="stylesheet" type="text/css" href="extjs/resources/css/multiselect.css" />
+ 	
+ 	<script type="text/javascript" src="extjs/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="extjs/adapter/ext/ext-basex.js"></script>
+
+    <script type="text/javascript" src="extjs/ext-all-debug.js"></script>
+	<script type="text/javascript" src="js/face/FlyingCommonFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingEmailFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingPermissionFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingFaces.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowFormFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowJsFormFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowAuditFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowJsAuditFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowShowFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingWorkflowJsShowFace.js"></script>
+	<script type="text/javascript" src="js/face/FlyingSubSystemFace.js"></script>
+	<script type="text/javascript" src="js/face/HdWorkflowFormFace.js"></script>
+	<script type="text/javascript" src="js/face/HdWorkflowAuditFace.js"></script>
+	<script type="text/javascript" src="js/face/HdBusinessAuditFace.js"></script>
+	<script type="text/javascript" src="js/face/HdBusinessShowFace.js"></script>
+	<script type="text/javascript" src="js/face/HdWorkflowShowFace.js"></script>
+	<script type="text/javascript" src="js/face/HdAuditListFace.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-init.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-core.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-grid.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-tab.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-toolbar.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-tree.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-TreeLoader.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-menu.js"></script>
+	<script type="text/javascript" src="extjs/ux/ItemSelector.js"></script>
+	<script type="text/javascript" src="extjs/ux/MultiSelect.js"></script>
+	<script type="text/javascript" src="extjs/ux/DDView.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-message.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-task.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-keditor.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-datepicker.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-upload.js"></script>
+	<script type="text/javascript" src="extjs/ux/flying-UploadDialog.js"></script>
+	<script type="text/javascript" src="extjs/locale/ext-lang-zh_CN.js"></script>
+    <!-- DESKTOP -->
+    <script type="text/javascript" src="extjs/ux/desktop/js/Window.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/StartMenu.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/MsgMenu.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/TaskBar.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/Desktop.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/App.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/js/Module.js"></script>
+    <script type="text/javascript" src="extjs/ux/desktop/MyTabWindow.js"></script>
+    
+    <script type="text/javascript" src="extjs/ux/kindeditor/kindeditor.js"></script>
+    <script type="text/javascript" src="extjs/ux/datepicker/WdatePicker.js"></script>
+     
+    <!-- treeLoader -->
+    <script type="text/javascript" src="extjs/ux/flying-TreeLoader.js"></script>
+    <!-- 选部门控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-departmentselection.js"></script>
+    <!-- 选人员控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-personselection.js"></script>
+    <script type="text/javascript" src="extjs/ux/flying-personwindow.js"></script>
+    <script type="text/javascript" src="extjs/ux/flying-personmultiselection.js"></script>
+    <!-- 树布局控件 -->
+    <script type="text/javascript" src="extjs/ux/flying-treelayout.js"></script>
+    <!-- 最新的face -->
+	<script type='text/javascript' src='extjs/face/ExtUtil.js'></script>
+	<script type='text/javascript' src='extjs/face/DefaultOpUtil.js'></script>
+	<script type='text/javascript' src='extjs/face/WfUtil.js'></script>
+	<script type='text/javascript' src='extjs/face/GridFace.js'></script>
+	<script type='text/javascript' src='extjs/face/FormFace.js'></script>
+	<script type='text/javascript' src='extjs/face/ToolbarFace.js'></script>
+	<script type='text/javascript' src='extjs/face/CommonGridFace.js'></script>
+	<script type='text/javascript' src='extjs/face/PermissionGridFace.js'></script>
+	<script type='text/javascript' src='extjs/face/EmailGridFace.js'></script>
+
+    <!-- 多文件上传 -->
+    <link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/index.css">
+	<link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/icons.css">
+ 	<link rel="stylesheet" type="text/css" href="extjs/ux/fileupload/css/UploadDialog.css" />
+    <script type="text/javascript" src="extjs/ux/fileupload/swfupload.js"></script>
+	<!-- 投票统计柱状图组件 -->
+	<script type="text/javascript" src="jquery/votebarchart/votebarchart.js"></script>
+	<!-- 日历 -->
+	<link rel='stylesheet' type='text/css' href='fullcalendar/theme.css' /> 
+	<link rel='stylesheet' type='text/css' href='fullcalendar/fullcalendar.css' />
+	<link rel='stylesheet' type='text/css' href='fullcalendar/fullcalendar.print.css' media='print' />
+	<script type='text/javascript' src='jquery/jquery-1.8.1.min.js'></script>
+	<script type="text/javascript" src="jquery/highcharts.js"></script>
+	<script type="text/javascript" src="jquery/exporting.js"></script>
+	<script type='text/javascript' src='fullcalendar/fullcalendar.js'></script>
+	<script type='text/javascript' src='fullcalendar/gcal.js'></script>
+	<style type='text/css'>
+	/* 	body {
+			margin-top: 10px;
+			text-align: center;
+			font-size: 13px;
+			font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+			}
+		 */
+		/********************************************** 鼠标悬停tip提示  ************************************************/
+		#tip{
+			position: absolute;
+			width: 250px;
+			max-width: 400px;
+			text-align: left;
+			padding: 4px;
+			border: #87CEEB solid 7px;
+			border-radius: 5px;
+			background: #00BFFF;
+			z-index: 1000;
+			behavior: url('/css/css3/pie.htc');
+		}
+		#tip ul{
+			margin: 0;
+			padding: 0;
+		}
+		#tip ul li{
+			font-family:'Microsoft YaHei', 微软雅黑, 'Microsoft JhengHei', 宋体;
+			font-size:15px;
+			list-style: none;
+			padding-left: 40px;
+		}
+		.clock{
+			/*line-height: 60px;*/
+			background: url('../fullcalendar/images/clock.png') no-repeat;
+			background-size:40px 40px;
+		}
+		.postmessage{
+			/*line-height: 60px;
+			font-size: 12px;*/
+			background: url('../fullcalendar/images/message.png') no-repeat;
+			background-size:40px 40px;
+		}
+		.message{
+			/*margin-top: 5px;*/
+			/*line-height: 60px;*/
+			background: url('../fullcalendar/images/text.png') no-repeat;
+			background-size:40px 40px;
+		}
+	</style>
+
+	<script type="text/javascript">
+		Ext.onReady(function() {
+			Ext.QuickTips.init();
+			
+			Ext.fcache.App = new Ext.app.App();
+			
+			Ext.fcache.App.onReady(function(){
+				
+			},Ext.fcache.App);
+		});
+	</script>
+    
+</head>
+<body scroll="no">
+
+<div id="x-desktop">
+</div>
+
+<div id="ux-taskbar">
+	<div id="ux-taskbar-start"></div>
+	<div id="ux-taskbuttons-panel"></div>
+	<div id="ux-msg-panel"></div>
+	<div class="x-clear"></div>
+</div>
+
+</body>
+</html>

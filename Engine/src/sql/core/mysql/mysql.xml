@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="mysql">
+    <!--配置文件开始-->
+    <!--创建时间2010-05-11 10:05:13-->
+    <!--别名-->
+        <typeAlias alias="hashmap" type="java.util.HashMap" />
+    <!--映射类-->
+		<resultMap class="java.util.HashMap" id="columnMap">
+            <result column="Field" property="ZDMC"/>              
+            <result column="Type" property="ZDLX" />
+            <result column="Extra" property="ZJFS"/>
+            <result column="Comment" property="ZDZS" />
+            <result column="Key" property="KEY" />   
+            <result column="Null" property="NULL" />
+            <result column="Default" property="MRZ" />         
+       	</resultMap>
+    	<resultMap class="java.util.HashMap" id="foreignInfoMap">
+            <result column="TABLE_NAME" property="ZBMC"/>              
+            <result column="COLUMN_NAME" property="ZBZD" />
+            <result column="REFERENCED_TABLE_NAME" property="WBMC"/>
+            <result column="REFERENCED_COLUMN_NAME" property="WBZD" />          
+       	</resultMap>
+     <!-- 查询表信息 -->
+	 <select id="selectTableByBmc" resultClass="hashmap" parameterClass="hashmap">   
+          <![CDATA[   
+          SELECT TABLE_NAME BMC,TABLE_COMMENT BZS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = #BMC#
+          ]]>
+     </select>
+    <!--查询show full columns from test1;-->
+	 <select id="selectFieldByBmc" resultMap="columnMap" parameterClass="hashmap">   
+          <![CDATA[   SHOW FULL COLUMNS FROM $BMC$   ]]>
+     </select>
+     
+    <!-- 根据外键查询：SELECT * FROM information_schema.KEY_COLUMN_USAGE WHERE table_name='t_xg_student' AND column_name='zzmm'-->
+    <select id="selectByZbzd" resultMap="foreignInfoMap" parameterClass="hashmap">
+    	SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME=#ZBMC# AND COLUMN_NAME=#ZBZD#
+    </select>
+</sqlMap>

@@ -1,0 +1,134 @@
+[{
+    text:'权限系统管理',
+    expanded: true,
+    children:[{
+        text:'普通模式',
+        id:'T_BG_XW1',
+        type:'common',
+        cache:false,
+        src:'biz/T_BG_XW.js',
+        leaf:true
+    },{
+        text:'email模式',
+        id:'T_BG_XW2',
+        type:'email',
+        cache:false,
+        src:'biz/T_BG_XW.js',
+        leaf:true
+    },{
+        text:'权限模式',
+        id:'T_BG_XW3',
+        cache:false,
+        type:'permission',
+        src:'biz/T_BG_XW.js',
+        leaf:true
+    },{
+        text:'日志管理',
+        id:'T_BG_XW4',
+        type:'common',
+        src:'biz/T_BG_XW/selectAll.js',
+        leaf:true
+    }]
+},{
+	text:'工作流管理',
+    expanded: true,
+    children:[{
+        text:'附件管理',
+        id:'T_BG_FJ',
+        type:'permission',
+        src:'biz/T_BG_FJ.js',
+        leaf:true
+    },{
+        text:'新闻附件',
+        id:'T_BG_FJ2',
+        type:'common',
+        src:'biz/T_BG_FJ/selectXw.js',
+        leaf:true
+    },{
+        text:'菜单管理',
+        id:'T_BASE_MENU',
+        type:'permission',
+        src:'biz/T_BASE_MENU.js',
+        leaf:true
+    },{
+        text:'经我审批',
+        id:'jwsp-manage',
+        type:'common',
+        src:'jwsp.js',
+        leaf:true
+    }]
+},{
+text:'人事管理',
+    expanded: true,
+    children:[{
+        type:'empty',
+        tabName:'add',
+        text:'部门管理',
+        id:'department-manage',
+        src:'rs/departmentpage.js',
+        leaf:true
+    },{
+    	text:'人员管理',
+        id:'serdetailpage-manage',
+        type:'empty',
+        src:'rs/userdetailpage.js',
+        leaf:true
+    }]
+},{
+text:'新闻管理',
+    expanded: true,
+    children:[{
+        type:'empty',
+        tabName:'add',
+        text:'发布新闻',
+        id:'news-manage1',
+        src:'office/news.js',
+        leaf:true
+    },{
+        type:'empty',
+        tabName:'list',
+        text:'全部新闻',
+        id:'news-manage2',
+        src:'office/news.js',
+        leaf:true
+    },{
+        type:'empty',
+        tabName:'modify',
+        text:'草稿箱',
+        id:'news-manage3',
+        src:'office/news.js',
+        leaf:true
+    },{
+        type:'empty',
+        tabName:null,
+        text:'分类管理',
+        id:'news-manage4',
+        src:'office/news.js',
+        leaf:true
+    }]
+},{
+text:'公告管理',
+    expanded: true,
+    children:[{
+    	text:'发布公告',
+        id:'bulletin-manage1',
+        type:'empty',
+        tabName:'add',
+        src:'office/bulletin.js',
+        leaf:true
+    },{
+    	text:'已发公告',
+        id:'bulletin-manage2',
+        type:'empty',
+        tabName:'list',
+        src:'office/bulletin.js',
+        leaf:true
+    },{
+    	text:'草稿箱',
+        id:'bulletin-manage3',
+        type:'empty',
+        tabName:'modify',
+        src:'office/bulletin.js',
+        leaf:true
+    }]
+}]

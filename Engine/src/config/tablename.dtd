@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+	author:zdf
+	date:2012-3-8
+ -->
+
+<!ELEMENT tablename (item*,interceptors*,startup?,whiteList?)+>
+<!ATTLIST tablename
+author CDATA #IMPLIED
+>
+
+<!ELEMENT item (op*)>
+<!ATTLIST item
+name CDATA #REQUIRED
+alias CDATA #REQUIRED
+load (true | false) #REQUIRED
+>
+
+<!ELEMENT op (interceptor*,interceptor-ref*)>
+<!ATTLIST op
+alias CDATA #REQUIRED
+sqlid CDATA #REQUIRED
+type (insert | update | delete | object | list | map | sql | space) #REQUIRED
+validate (true | false) #IMPLIED
+>
+
+<!ELEMENT interceptors (interceptor-stack*)>
+<!ELEMENT interceptor-stack (interceptor*)>
+<!ATTLIST interceptor-stack
+name CDATA #REQUIRED
+>
+
+<!ELEMENT interceptor-ref EMPTY>
+<!ATTLIST interceptor-ref
+name CDATA #REQUIRED
+>
+
+<!ELEMENT interceptor EMPTY>
+<!ATTLIST interceptor
+alias CDATA #IMPLIED
+class CDATA #REQUIRED
+>
+
+<!ELEMENT startup (startup-item*)>
+
+<!ELEMENT startup-item EMPTY>
+<!ATTLIST startup-item
+class CDATA #REQUIRED
+>
+
+<!ELEMENT whiteList (login-whiteList-item*,logout-whiteList-item*)>
+
+<!ELEMENT login-whiteList-item EMPTY>
+<!ATTLIST login-whiteList-item
+name CDATA #REQUIRED
+>
+
+<!ELEMENT logout-whiteList-item EMPTY>
+<!ATTLIST logout-whiteList-item
+name CDATA #REQUIRED
+>

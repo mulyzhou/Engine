@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="&NAMESPACE&">
+    <!--&CNNAME&配置文件开始-->
+    <!--别名-->
+    <typeAlias alias="hashmap" type="java.util.HashMap" />
+
+    <!-- 查询【&CNNAME&】所有数据-->
+    <select id="selectAll"  parameterClass="hashmap" resultClass="hashmap">
+    	SELECT * FROM(
+			SELECT ROWNUM ROW_NUM,B.* FROM(
+			       SELECT &FIELDALIAS& FROM &TABLE& 
+			       <isNotEmpty prepend="" property="order">
+	    				$order$
+	    		   </isNotEmpty>
+	    		   <isEmpty prepend="" property="order">
+	    		   		ORDER BY &pk&  DESC
+	    		   </isEmpty>
+			) B   	
+			<isNotEmpty prepend="WHERE" property="filter">
+	    		($filter$)
+	    	</isNotEmpty>
+    	) 
+    	<isNotEmpty prepend="WHERE" property="start">
+    		ROW_NUM BETWEEN  (#start#+1) and (#start#+#limit#)
+    	</isNotEmpty>
+    </select>
+    <select id="selectAllTotal" parameterClass="hashmap" resultClass="int">
+    	SELECT COUNT(1) FROM (
+    		SELECT &FIELDALIAS& FROM &TABLE& 
+    		<isNotEmpty prepend="WHERE" property="filter">
+    		    	($filter$)
+    		</isNotEmpty>
+    	) B
+    </select>
+    <!--根据ID删除【&CNNAME&】-->
+    <select id="selectById" resultClass="hashmap">
+    	SELECT &FIELDALIAS& FROM &TABLE& WHERE &selectPk&
+    </select>
+    <!--添加【&CNNAME&】-->
+	<insert id="insert" parameterClass="hashmap">
+		&beforeReturnID&
+		INSERT INTO &NAMESPACE&(&FIELD&) 
+		VALUES (&INSERTFIELD&)
+		&afterReturnID&
+    </insert>
+    <!--根据ID删除【&CNNAME&】-->
+    <delete id="delete" parameterClass="hashmap">
+		DELETE FROM &NAMESPACE& WHERE &deletePk&
+	</delete>
+    <!--修改【&CNNAME&】-->
+	<update id="update" parameterClass="hashmap">
+		UPDATE  &NAMESPACE& SET &UPDATEFIELD&
+		WHERE  &updatePk&
+	</update> 
+</sqlMap>

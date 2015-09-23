@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="extjs/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="extjs/adapter/ext/ext-basex.js"></script>
+<script type="text/javascript" src="extjs/ext-all-debug.js"></script>
+<script type="text/javascript">
+function register(){
+	FPSOnline11.sEnrollCount(3);
+	
+	if(FPSOnline11.Register()){
+		form1.S1.value  = FPSOnline11.GetRegisterTemplate();
+		form1.T1.value  = FPSOnline11.GetFpMark();
+	}
+	return form1.S1.value;
+}
+
+function doAttendance(){
+	FPSOnline11.stateMark = 3;
+	
+	if(FPSOnline11.Verify()){
+		form1.S2.value=FPSOnline11.GetVerifyTemplate();
+		return form1.S2.value;
+	}
+}
+
+function doAttendanceReturnPerson(){
+	var mark = -1;
+	FPSOnline11.stateMark = 3;
+	
+	if(FPSOnline11.Verify()){
+		var fingerStr=FPSOnline11.GetVerifyTemplate();
+
+		Ext.Ajax.request({                           
+			url : 'validateFinger.action',
+			params : {"fingerStr":fingerStr},
+			async: false,
+	        method:'GET',
+	        success:function(response, opts){
+	        	var responseArray = Ext.util.JSON.decode(response.responseText);
+	        	mark = responseArray.userId;
+	        }
+	    });
+	}
+	return mark;
+}
+
+function submitVerify()
+{
+	FPSOnline11.stateMark = 3;
+	
+	if (FPSOnline11.VerifyTemplateFromstr(form1.S1.value,form1.S2.value)){
+	    alert("success");
+	}else{  
+		alert("failure");
+	}   
+}
+</script>
+<title>New Page</title>
+</head>
+<body>
+    <OBJECT ID="FPSOnline11" WIDTH=43 HEIGHT=27
+     CLASSID="CLSID:{6BF7DA6D-38D8-4A2E-B6D5-8E5652AD7EBF}">
+        <PARAM NAME="_ExtentX" VALUE="9075">
+        <PARAM NAME="_ExtentY" VALUE="7064">
+    </OBJECT>
+	<input type="button" value="注册指纹" onClick="register()">
+	<input type="button" value="输入验证的指纹" onClick="doAttendance()">&nbsp;&nbsp;
+	<input type="button" value="开始验证" onClick="submitVerify()">
+	<form method="POST" action="" id="form1">
+		<p>登记指纹特征值<textarea rows="18" name="S1" cols="33"></textarea>指纹标志<input type="text" name="T1" size="20">比对指纹特征值<textarea rows="17" name="S2" cols="20"></textarea></p>
+	</form>
+</body>
+</html>

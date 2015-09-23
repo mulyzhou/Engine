@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="T_BASE_STATICS">
+	<!--ibatic注册
+	sql-map-config.xml 的注册字符串： <sqlMap resource="com/flying/dao/xml/T_BASE_STATICS.xml" />
+	-->
+	<!--数据库注册
+	注册到数据库 ： INSERT INTO T_BASE_CONFIG(CDMC,YWMC,ZXSQLID) VALUE('报表语句','T_BASE_STATICS','T_BASE_STATICS.selectAll');
+	-->
+    <!--报表语句配置文件开始-->
+    <!--别名-->
+        <typeAlias alias="result" type="java.util.HashMap" />
+        <typeAlias alias="param" type="java.util.HashMap" />
+
+    <!-- 查询-->
+    <select id="selectAll"  parameterClass="param" resultClass="result">
+    	SELECT * FROM(
+			SELECT * FROM(
+			       SELECT ROWNUM ROW_NUM,A.BBID,A.BBMC,A.SQLID,A.BBJY FROM T_BASE_STATICS A 
+			       <isNotEmpty prepend="" property="order">
+	    				$order$
+	    		   </isNotEmpty>
+	    		   <isEmpty prepend="" property="order">
+	    		   		ORDER BY BBID  DESC
+	    		   </isEmpty>
+			)    	
+			<isNotEmpty prepend="WHERE" property="filter">
+	    		$filter$
+	    	</isNotEmpty>
+    	) 
+    	<isNotEmpty prepend="WHERE" property="start">
+    		ROW_NUM BETWEEN  (#start#+1) and (#start#+#limit#)
+    	</isNotEmpty>
+    </select>
+    <select id="selectAllTotal" parameterClass="param" resultClass="int">
+    	SELECT COUNT(1) FROM T_BASE_STATICS A 
+    	<isNotEmpty prepend="WHERE" property="filter">
+	    		$filter$
+	    </isNotEmpty>
+    </select>
+    <select id="selectById" resultClass="result">
+    	SELECT A.BBID,A.BBMC,A.SQLID,A.BBJY FROM T_BASE_STATICS A WHERE A.BBID = #BBID#
+    </select>
+    <select id="selectBySqlid" resultClass="result">
+    	SELECT A.BBID,A.BBMC,A.SQLID,A.BBJY FROM T_BASE_STATICS A WHERE A.SQLID = #SQLID#
+    </select>
+    <!--插入-->
+	<insert id="insert" parameterClass="param">
+		<selectKey  resultClass ="int"  keyProperty ="BBID" >   
+			<![CDATA[ SELECT SEQ_BASE_STATICS.NEXTVAL AS BBID FROM DUAL]]>     
+		</selectKey >
+		INSERT INTO T_BASE_STATICS(BBID,BBMC,SQLID,BBJY) 
+		VALUES (#BBID:INTEGER#,#BBMC:VARCHAR#,#SQLID:VARCHAR#,#BBJY:VARCHAR#)
+		 
+    </insert>
+    <!--删除-->
+    <delete id="delete" parameterClass="param">
+		DELETE FROM T_BASE_STATICS WHERE BBID = #BBID#
+	</delete>
+	<delete id="deleteBySqlid" parameterClass="param">
+		DELETE FROM T_BASE_STATICS WHERE SQLID = #SQLID#
+	</delete>
+    <!--更新-->
+	<update id="update" parameterClass="param">
+		UPDATE  T_BASE_STATICS SET BBMC = #BBMC:VARCHAR#,SQLID = #SQLID:VARCHAR#,BBJY = #BBJY:VARCHAR#
+		WHERE  BBID = #BBID#
+	</update> 
+</sqlMap>

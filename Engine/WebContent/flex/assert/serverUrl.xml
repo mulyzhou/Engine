@@ -1,0 +1,26 @@
+<nodes>
+	<node id="deploy">
+		<value>http://localhost:8888/OAPM-Web/sendAction.action</value>
+	</node>
+	<node id="viewPic">
+		<value>http://localhost:8888/OAPM-Web/viewPic.action</value>
+	</node>
+	<node id="viewProcess">
+		<value>http://localhost:8888/OAPM-Web/viewProcess.action?execution="%E9%A9%B3%E5%9B%9E.660061"</value>
+	</node>
+	<node id="getFormInfo">
+		<value>http://localhost:8888/OAPM-Web/allFormData.action</value>
+	</node>
+	<node id="userDepartmentList">
+		<value>http://localhost:8888/OAPM-Web/userDepartmentList.action</value>
+	</node>
+	<node id="listPublicGroup"> 
+		<value>http://localhost:8888/OAPM-Web/listPublicGroup.action</value>
+	</node>
+	<node id="groupMemberpath">
+		<value>http://localhost:8888/OAPM-Web/viewGroupmember.action</value>
+	</node>
+	<node id="getRole">
+		<value>http://localhost:8888/OAPM-Web/getAllRoles.action</value>
+	</node>
+</nodes>

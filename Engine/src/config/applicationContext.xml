@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="GB2312"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<!--此bean告诉Spring去哪找数据库的配置信息,因为有此Bean才出现下面用${}标记来取变量的语句-->
+	<bean id="propertyConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:sql/database.properties</value>
+		</property>
+	</bean>
+
+	<!--配置一个数据源,根据上面propertyConfig指定的location去找数据库连接的配置信息-->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${driver}</value>
+		</property>
+		<property name="url">
+			<value>${url}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="password">
+			<value>${password}</value>
+		</property>
+	</bean>
+
+	<!--配置事务管理-->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="execute" propagation="REQUIRED" rollback-for="Exception"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="BaseMethod"
+			expression="execution(* com.flying.service.ServiceEngine.*(..))" />			
+		<aop:advisor advice-ref="txAdvice"
+			pointcut-ref="BaseMethod" />
+	</aop:config>
+
+	<bean id="ServiceEngine" class="com.flying.service.ServiceEngine" scope="prototype">
+		<property name="dao">
+			<ref bean="BaseDAO" />
+		</property>
+	</bean>
+	
+	<bean id="BaseDAO" class="com.flying.dao.BaseDAO">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	<!-- Ibatis用于处理Blob大对象 -->
+	<bean id="lobHandler"  class="org.springframework.jdbc.support.lob.DefaultLobHandler"/> 
+	<!--根据dataSource和configLocation创建一个SqlMapClient-->
+	<bean id="sqlMapClient"
+		class="com.flying.util.CustomSqlMapClientFactoryBean">
+		<property name="configLocation">
+			<value>
+				classpath:sql/sql-map-config.xml
+			</value>
+		</property>
+		<property name="extendConfigLocation" value="classpath:sql/sql-map-import.xml"/>
+		<property name="lobHandler" ref="lobHandler"/>
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+	<!-- xfire支持 
+	<bean id="wsCenter" class="com.flying.view.xfire.WsCenterImpl"/>
+
+    <bean name="helloService" class="org.codehaus.xfire.spring.ServiceBean">
+    	<property name="serviceBean" ref="wsCenter"/>
+    	<property name="serviceClass" value="com.flying.view.xfire.WsCenter"/>
+    	<property name="inHandlers">
+      		<list>
+        		<ref bean="addressingHandler"/>
+      		</list>
+    	</property>
+	</bean>
+
+	<bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingInHandler"/>-->
+</beans>

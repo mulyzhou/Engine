@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="T_BASE_FOREIGNKEY">
+	<!--ibatic注册
+	sql-map-config.xml 的注册字符串： <sqlMap resource="com/flying/dao/xml/T_BASE_FOREIGNKEY.xml" />
+	-->
+	<!--数据库注册
+	注册到数据库 ： INSERT INTO T_BASE_CONFIG(CDMC,YWMC,ZXSQLID) VALUE('外键管理','T_BASE_FOREIGNKEY','T_BASE_FOREIGNKEY.selectAll');
+	-->
+    <!--外键管理配置文件开始-->
+    <!--别名-->
+    <typeAlias alias="result" type="java.util.HashMap" />
+    <typeAlias alias="param" type="java.util.HashMap" />
+
+    <!-- 查询-->
+    <select id="selectAll"  parameterClass="param" resultClass="result">
+    	SELECT * FROM(
+			SELECT * FROM(
+			       SELECT ROWNUM ROW_NUM,A.WJID,A.WJMC,A.ZBMC,A.WBMC,A.ZBZD,A.WBZD,A.STATE FROM T_BASE_FOREIGNKEY A 
+			)    	
+			<isNotEmpty prepend="WHERE" property="filter">
+	    		$filter$
+	    	</isNotEmpty>
+    	) 
+    	<isNotEmpty prepend="WHERE" property="start">
+    		ROW_NUM BETWEEN  (#start#+1) and (#start#+#limit#)
+    	</isNotEmpty>
+    </select>
+    <select id="selectAllTotal" parameterClass="param" resultClass="int">
+    	SELECT COUNT(1) FROM T_BASE_FOREIGNKEY A
+    </select>
+    <select id="selectById" resultClass="result">
+    	SELECT A.WJID,A.WJMC,A.ZBMC,A.WBMC,A.ZBZD,A.WBZD,A.STATE FROM T_BASE_FOREIGNKEY A WHERE A.WJID = #WJID#
+    </select>
+    <select id="selectByFromName"  parameterClass="param" resultClass="result">
+    	SELECT A.WJID,A.WJMC,A.ZBMC,A.WBMC,A.ZBZD,A.WBZD,A.STATE FROM T_BASE_FOREIGNKEY A WHERE A.ZBMC = #MC# OR A.WBMC = #MC#
+    </select>
+    <select id="selectByWbzd"  parameterClass="param" resultClass="result">
+    	SELECT A.WJID,A.WJMC,A.ZBMC,A.WBMC,A.ZBZD,A.WBZD,A.STATE FROM T_BASE_FOREIGNKEY A WHERE A.WBMC = #WBMC# AND A.WBZD = #WBZD#
+    </select>
+    <select id="selectByZbzd"  parameterClass="param" resultClass="result">
+    	SELECT A.WJID,A.WJMC,A.ZBMC,A.WBMC,A.ZBZD,A.WBZD,A.STATE FROM T_BASE_FOREIGNKEY A WHERE A.ZBMC = #ZBMC# AND A.ZBZD = #ZBZD#
+    </select>
+    <!--插入-->
+	<insert id="insert" parameterClass="param">
+		<selectKey  resultClass ="int"  keyProperty ="WJID" >   
+        	<![CDATA[ SELECT SEQ_BASE_FOREIGNKEY.NEXTVAL AS WJID FROM DUAL ]]>     
+        </selectKey > 
+		INSERT INTO T_BASE_FOREIGNKEY(WJID,WJMC,ZBMC,WBMC,ZBZD,WBZD,STATE) 
+		VALUES (#WJID:INTEGER#,#WJMC:VARCHAR#,#ZBMC:VARCHAR#,#WBMC:VARCHAR#,#ZBZD:VARCHAR#,#WBZD:VARCHAR#,#STATE:INTEGER#)
+    </insert>
+    <!--删除-->
+    <delete id="delete" parameterClass="param">
+		DELETE FROM T_BASE_FOREIGNKEY WHERE WJID = #WJID#
+	</delete>
+	<delete id="deleteByBmc" parameterClass="param">
+		DELETE FROM T_BASE_FOREIGNKEY WHERE ZBMC = #BMC# OR WBMC = #BMC#
+	</delete>
+    <!--更新-->
+	<update id="update" parameterClass="param">
+		UPDATE  T_BASE_FOREIGNKEY SET WJMC = #WJMC:VARCHAR#,ZBMC = #ZBMC:VARCHAR#,WBMC = #WBMC:VARCHAR#,ZBZD = #ZBZD:VARCHAR#,WBZD = #WBZD:VARCHAR#,STATE = #STATE:INTEGER#
+		WHERE WJID = #WJID#
+	</update> 
+	<!-- 获取一张表的所有关系 -->
+	<procedure id="relationTable" parameterClass="param" resultClass="result">
+		{CALL RelationTable(#BMC#)}
+	</procedure>
+	
+	<procedure id="RelationTableOfwb" parameterClass="param" resultClass="result">
+		{CALL RelationTableOfwb(#BMC#,#WBMC#)}
+	</procedure>
+</sqlMap>

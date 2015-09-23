@@ -1,0 +1,13 @@
+<nodes>
+	<node id="001" text="台式机" viewName="">
+		<node id="001001" text="联想台式机" viewName="" />
+		<node id="001002" text="戴尔台式机" viewName="" />
+	</node>
+	<node id="002" text="笔记本" url="">
+		<node id="002001" text="联想笔记本" viewName="" />
+		<node id="002002" text="戴尔笔记本" viewName="" />
+	</node>	
+	<node id="003" text="DIY" viewName="" />
+	<node id="004" text="员工管理" viewName="biz.Employee" />
+	<node id="004" text="主页" viewName="welcomeView" />
+</nodes>

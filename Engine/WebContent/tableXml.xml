@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+    <table id="25" name="T_BASE_LOG" desc="系统日志表" clientState="1" state="1" x="471" y="232" width="100" height="224">
+        <column name="LOG_ID" desc="ID" type="varchar" length="50" isNull="false" isPk="true" isFk="false" rountId="0"/>
+        <column name="IP" desc="访问的IP地址" type="varchar" length="50" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="COMMAND" desc="请求的命令" type="varchar" length="50" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="COMMAND_PARAM" desc="命令参数" type="varchar" length="4000" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="STARTTIME" desc="发起时间" type="date" length="20" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="USER_ID" desc="用户ID" type="varchar" length="50" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="USER_NAME" desc="用户名称" type="varchar" length="50" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="SQLID" desc="执行的sqlid" type="varchar" length="50" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="SQLID_TYPE" desc="执行的类型" type="varchar" length="10" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="TABLENAME" desc="执行表名称" type="varchar" length="100" isNull="true" isPk="false" isFk="false" rountId="0"/>
+        <column name="SQLID_PARAM" desc="执行的参数" type="varchar" length="4000" isNull="true" isPk="false" isFk="false" rountId="0"/>
+    </table>
+</tables>

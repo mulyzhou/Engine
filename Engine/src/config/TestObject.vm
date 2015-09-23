@@ -1,0 +1,111 @@
+package com.flying.test.[sub];
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.flying.service.Engine;
+import com.flying.service.EngineParameter;
+
+public class Test[Sub][Table] {
+	private static String [ID] = null;
+	private static Map<String,Object> [sub][Table]Map  = new HashMap<String,Object>();
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		[tableMap_init]
+		//sysRoleMap.put("ROLE_NAME", "测试管理员");
+		//sysRoleMap.put("ROLE_DESC", "添加一个测试管理员");
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		[sub][Table]Map = null;
+	}
+	
+	@Test
+	public void testInsert() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].insert");
+		ep.setParamMap([sub][Table]Map);
+
+		Engine.execute(ep);
+
+		Assert.assertNotNull(ep.getResult("data"));
+		Assert.assertTrue(ep.getResult("data") instanceof String);
+		[ID] = (String) ep.getResult("data");
+		Assert.assertTrue([ID].length() > 0);
+	}
+
+	@Test
+	public void testFirstSelectById() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].selectById");
+		ep.putParam("[ID]", [ID]);
+
+		Engine.execute(ep);
+		
+		Assert.assertTrue(((Map)ep.getResult("data")).size() > 0);
+		[Assert.assertEquals.tableMap]
+		//Assert.assertEquals(sysRoleMap.get("ROLE_NAME"), ((Map)ep.getResult("data")).get("ROLE_NAME"));
+		//Assert.assertEquals(sysRoleMap.get("ROLE_DESC"), ((Map)ep.getResult("data")).get("ROLE_DESC"));
+	}
+	
+	@Test
+	public void testUpdate() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].update");
+		sysRoleMap.put("[ID]", [ID]);
+		[tableMap_init]
+		//sysRoleMap.put("ROLE_NAME", "测试管理员1");
+		//sysRoleMap.put("ROLE_DESC", "修改一个测试管理员");
+		
+		ep.setParamMap([sub][Table]Map);
+		
+		Engine.execute(ep);
+	}
+	
+	@Test
+	public void testSecondSelectById() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].selectById");
+		ep.putParam("[ID]", [ID]);
+
+		Engine.execute(ep);
+		
+		Assert.assertTrue(((Map)ep.getResult("data")).size() > 0);
+		[Assert.assertEquals.tableMap]
+		//Assert.assertEquals(sysRoleMap.get("ROLE_NAME"), ((Map)ep.getResult("data")).get("ROLE_NAME"));
+		//Assert.assertEquals(sysRoleMap.get("ROLE_DESC"), ((Map)ep.getResult("data")).get("ROLE_DESC"));
+	}
+	
+	@Test
+	public void testSelectAll() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].selectAll");
+		String filter = "[ROLE_NAME] LIKE '%" + [sub][Table]Map.get("[ROLE_NAME]") + "%'";
+		Engine.execute(ep);
+		
+		Assert.assertNotNull(ep.getResult("data"));
+		List<Map> listMap = (List<Map>) ep.getResult("data");
+		Assert.assertTrue(listMap.size() > 0);
+	}
+	
+	@Test
+	public void testDelete() throws Exception {	
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].delete");
+		ep.putParam("[ID]", [ID]);
+		Engine.execute(ep);
+	}
+	
+	@Test
+	public void testThirdSelectById() throws Exception {
+		EngineParameter ep = new EngineParameter("[T_SUB_TABLE].selectById");
+		ep.putParam("[ID]", [ID]);
+
+		Engine.execute(ep);
+		
+		Assert.assertTrue(((Map)ep.getResult("data")).size() == 0);
+	}
+}
