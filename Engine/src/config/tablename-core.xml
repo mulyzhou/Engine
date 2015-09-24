@@ -37,6 +37,7 @@
 		<op alias="查询表信息" sqlid="mysql.selectTableByBmc" type="object" />
 		<op alias="查询字段信息" sqlid="mysql.selectFieldByBmc" type="list" />
 		<op alias="查询外键信息 " sqlid="mysql.selectByZbzd" type="list" />
+		<op alias="根据条件查询表" sqlid="mysql.selectTable" type="list" />
 	</item>
 	<item name="T_BASE_TABLE" alias="表管理" load="true">
 		<op alias="添加【表信息】" sqlid="T_BASE_TABLE.insert" type="insert">

@@ -43,6 +43,8 @@ public class StaticVariable {
 	public static String CONFIG_PATH = "src";
 	//是否启用字典表false：不启用；true：启用；默认不启用
 	public static boolean ENABLE_DATATABLE = false;
+	//mysql查询本库中含有多少用户表时，需要知道schema
+	public static String DB_URL = "";
 	//访问配置缓存
 	public static final Map<String,Item> FLYINGCONFIG = new HashMap<String,Item>();
 	//拦截器集合

@@ -1,4 +1,4 @@
-package com.flying.test;
+package com.flying.init;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,17 +8,19 @@ import java.util.Properties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.flying.builder.TableNameFileForJar;
+import com.flying.builder.TableNameFile;
 import com.flying.exception.FlyingException;
-import com.flying.init.StaticVariable;
 import com.flying.logging.Log;
 import com.flying.logging.LogFactory;
 import com.flying.service.Engine;
 
-public class FlyingJunitInit {
-	private static Log log = LogFactory.getLog(FlyingJunitInit.class);
+public class EngineInit {
+	private static Log log = LogFactory.getLog(EngineInit.class);
 	
-	public static void initEnvironment(){
+	/**
+	 * 初始化系统参数
+	 */
+	static{
 		InputStream in = null;// 文件输入流
 		Properties pp = new Properties();// 数据库属性
 
@@ -53,16 +55,12 @@ public class FlyingJunitInit {
 				throw new FlyingException("flying.DEBUG 参数为空或者有误!");
 			}
 			
+			StaticVariable.PATH = path;
 			if(StaticVariable.DEBUG){
-				if (!"".equals(path)) {// 调试模式下，开发环境地址
-					StaticVariable.PATH = path;
-				} else {
+				if ("".equals(path)) {// 调试模式下，开发环境地址
 					throw new FlyingException("flying.PATH 参数为空!");
 				}
-			}else{
-				throw new FlyingException("不在调试模式，运行了junit！");
 			}
-			
 	
 			if (!"".equals(module)) {// 生成ibatis配置文件的别名
 				StaticVariable.MODULE = module.toLowerCase();
@@ -108,8 +106,10 @@ public class FlyingJunitInit {
 		
 		log.debug("解析flying.properties配置文件完成");
 	}
-	
-	public static void initDB(){
+	/**
+	 * 初始系统的数据库连接参数
+	 */
+	static{
 		/**
 		 * 在系统初始化的时候，根据用户连接数据的驱动信息，配置用户使用的数据库类型信息
 		 */
@@ -125,7 +125,7 @@ public class FlyingJunitInit {
 		}
 
 		String driver = pp.getProperty("driver");// 获取驱动属性
-
+		StaticVariable.DB_URL = pp.getProperty("url");// 获取数据库地址
 		if (driver.contains("mysql")) {// 驱动中含有mysql，则是mysql数据库
 			StaticVariable.DB = "mysql";
 
@@ -138,8 +138,35 @@ public class FlyingJunitInit {
 
 		log.debug("本系统使用的数据库是：" + StaticVariable.DB);
 	}
-	
-	public static void initContainer() {
+	/**
+	 * 
+	 */
+	public static void appStart(){
+		log.info("java应用系统初始化！");
+		String applicationContext = "config/applicationContext.xml";
+		//xfire的webservice支持
+		//String xfireContext = "org/codehaus/xfire/spring/xfire.xml";
+		
+		/* 构建spring运行环境 */
+		ApplicationContext wac = new ClassPathXmlApplicationContext(
+				new String[] { applicationContext });//,xfireContext }); // WebApplicationContextUtils.getWebApplicationContext(application);
+
+		/* 设置引擎运行环境 */
+		Engine.ac = wac;
+		
+		//解析tablename文件
+		try {
+			TableNameFile.parse();
+		} catch (FlyingException e) {
+			log.error("tablename解析失败！", e);
+		}
+	}
+	/**
+	 * 系统初始化引导方法
+	 * 引导初始化的代码片段执行
+	 * @author zdf
+	 */
+	public static void webStart(){
 		String applicationContext = "config/applicationContext.xml";
 		
 		/* 构建spring运行环境 */
@@ -148,27 +175,5 @@ public class FlyingJunitInit {
 		
 		/* 设置引擎运行环境 */
 		Engine.ac = wac;
-	}
-	
-	public static void init(){
-		if(Engine.ac == null){
-			/* 初始化环境参数 */
-			initEnvironment();
-	
-			/* 判断使用的数据库*/
-			initDB();
-			
-			/* 初始化spring容器 */
-			initContainer();
-	
-			//解析tablename文件
-			try {
-				TableNameFileForJar.parse();
-			} catch (FlyingException e) {
-				e.printStackTrace();
-			}
-		}else{
-			log.debug("spring 环境已经初始化完毕！");
-		}
 	}
 }

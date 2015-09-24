@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import com.flying.Interceptor.Interceptor;
@@ -65,7 +67,7 @@ public class TableNameFile {
 		//存储需要生产操作的表数据
 		List<Item> needGenerateTable = new ArrayList<Item>();
 		log.info(BuilderUtil.getTableNameImportXmlPath());
-		Document tableNameImportDocument = FileUtil.readXml(FileUtil.createFile(BuilderUtil.getTableNameImportXmlPath()));
+		Document tableNameImportDocument = FileUtil.readXml(Thread.currentThread().getContextClassLoader().getResourceAsStream("config/tablename-import.xml"));
 		List tableList = tableNameImportDocument.selectNodes("/tablenames/import");
 		// 遍历
 		Iterator tableIter = tableList.iterator();
@@ -356,5 +358,113 @@ public class TableNameFile {
 		FileUtil.writeXml(tableNameDocument, tableNameFile);//写回操作
 		
 		log.debug("删除name="+bmc+"的item节点！");
+	}
+	
+	/**
+	 * 检查有tablename-module.xml配置文件是否存在，如果不存在，则生成。
+	 * 
+	 * @throws FlyingException 
+	 * 
+	 */
+	public static void checkTablename() throws FlyingException{
+		/* 检查有没有tablename-module.xml配置文件*/
+		File tableNameFile = FileUtil.createFile(BuilderUtil.getTableNameXmlPath());
+		if(!tableNameFile.exists()){
+			Document tableNameDocument  = DocumentHelper.createDocument();//创建document文件
+			
+			tableNameDocument.addElement("tablename");//创建根节点
+			
+			FileUtil.writeXml(tableNameDocument, tableNameFile);//写回操作
+			
+			/*将tablename注册入系统*/
+			String tableNameImportXmlPath = BuilderUtil.getTableNameImportXmlPath();
+			File tableNameImportXmlFile = FileUtil.createFile(tableNameImportXmlPath);
+			Document tableNameImportDocument = FileUtil.readXml(tableNameImportXmlFile);
+			Element tablenamesElement = (Element) tableNameImportDocument.getRootElement();
+			// 构建新增节点
+			Element importElement = tablenamesElement.addElement("import");
+			importElement.addAttribute("resource", "config/tablename-"+StaticVariable.MODULE+".xml");
+			// 保存到文件
+			FileUtil.writeXml(tableNameImportDocument,tableNameImportXmlFile);
+			
+			log.debug("在tablename-import.xml中注册 "+ StaticVariable.MODULE +" 子系统");
+		}
+	}
+	/**
+	 * 
+	 * @param newTableList 需要生成的table集合
+	 * @param dir 生成到指定目录
+	 * @throws FlyingException
+	 */
+	public static void generateItem(List<Map> newTableList,String dir) throws FlyingException{
+		/** 解析tablename.xml开始 **/
+		// 构建tablename.xml
+		File tableNameFile = null;
+		if(dir == null){
+			//检查有tablename-module.xml
+			TableNameFile.checkTablename();
+			// 构建tablename.xml
+			tableNameFile = FileUtil.createFile(BuilderUtil.getTableNameXmlPath());
+		}else{
+			// 构建tablename.xml
+			tableNameFile = FileUtil.createFile(dir + "/tablename-" + StaticVariable.MODULE + ".xml");
+			
+			Document tableNameDocument  = DocumentHelper.createDocument();//创建document文件
+			
+			tableNameDocument.addElement("tablename");//创建根节点
+			
+			FileUtil.writeXml(tableNameDocument, tableNameFile);//写回操作
+		}
+		
+		// 读取文
+		Document tableNameDocument = FileUtil.readXml(tableNameFile);
+		//添加一个元素
+		Element root = tableNameDocument.getRootElement();
+
+		for(int m=0;m<newTableList.size();m++){
+			//添加一个items节点
+			Element item = root.addElement("item");
+			
+			String bmc = newTableList.get(m).get("BMC")==null?"":newTableList.get(m).get("BMC").toString().toUpperCase();
+			String bzs = newTableList.get(m).get("BZS")==null?bmc:newTableList.get(m).get("BZS").toString();
+			item.addAttribute("name",bmc);
+			item.addAttribute("alias", bzs);
+			item.addAttribute("load", "false");
+			
+			Element addElem = item.addElement("op");
+			addElem.addAttribute("alias", "添加【"+bzs+"】");
+			addElem.addAttribute("sqlid", bmc+".insert");
+			addElem.addAttribute("type", "insert");
+			
+			Element addInterceptorRef = addElem.addElement("interceptor-ref");
+			addInterceptorRef.addAttribute("name", "insertInterceptor");
+			
+			Element updateElem = item.addElement("op");
+			updateElem.addAttribute("alias", "修改【"+bzs+"】");
+			updateElem.addAttribute("sqlid", bmc+".update");
+			updateElem.addAttribute("type", "update");
+			
+			Element updateInterceptorRef = updateElem.addElement("interceptor-ref");
+			updateInterceptorRef.addAttribute("name", "updateInterceptor");
+			
+			Element deleteElem = item.addElement("op");
+			deleteElem.addAttribute("alias", "根据ID删除【"+bzs+"】");
+			deleteElem.addAttribute("sqlid", bmc+".delete");
+			deleteElem.addAttribute("type", "delete");
+			
+			Element selectAllElem = item.addElement("op");
+			selectAllElem.addAttribute("alias", "查询【"+bzs+"】所有数据");
+			selectAllElem.addAttribute("sqlid", bmc+".selectAll");
+			selectAllElem.addAttribute("type", "map");
+			
+			Element selectByIdElem = item.addElement("op");
+			selectByIdElem.addAttribute("alias", "查询【"+bzs+"】通过ID查询");
+			selectByIdElem.addAttribute("sqlid", bmc+".selectById");
+			selectByIdElem.addAttribute("type", "object");
+		}
+
+		//写回操作
+		FileUtil.writeXml(tableNameDocument, tableNameFile);
+		log.debug("向tablename.xml注册"+newTableList.size()+"个item");
 	}
 }

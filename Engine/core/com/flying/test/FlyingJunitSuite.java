@@ -3,26 +3,34 @@ package com.flying.test;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-
-import com.flying.init.Item;
-import com.flying.logging.Log;
-import com.flying.logging.LogFactory;
-import com.flying.util.FileUtil;
-import com.flying.util.FlyingUtil;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+
+import com.flying.builder.TableNameFile;
+import com.flying.exception.FlyingException;
+import com.flying.init.EngineInit;
+import com.flying.init.StaticVariable;
+import com.flying.logging.Log;
+import com.flying.logging.LogFactory;
+import com.flying.service.Engine;
+import com.flying.util.FileUtil;
+import com.flying.util.FlyingUtil;
 
 public class FlyingJunitSuite {
 	private static Log log = LogFactory.getLog(FlyingJunitSuite.class);
 	
 	static{
-		//初始化运行环境
-		log.debug("初始化spring环境");
-		FlyingJunitInit.init();
+		if(Engine.ac == null){
+			log.info("java应用系统初始化！");
+			//系统初始化
+			EngineInit.appStart();
+		}else{
+			log.debug("spring 环境已经初始化完毕！");
+		}
 	}
 	
 	public static Test suite(){

@@ -12,6 +12,7 @@ import org.dom4j.Element;
 
 import com.flying.Interceptor.AbstractInterceptor;
 import com.flying.builder.BuilderUtil;
+import com.flying.builder.TableNameFile;
 import com.flying.exception.FlyingException;
 import com.flying.init.StaticVariable;
 import com.flying.service.Engine;
@@ -117,7 +118,7 @@ public class CreateTableInterceptor extends AbstractInterceptor {
 		/**
 		 * 系统构建第四步（修改tablename.xml配置文件）
 		 */
-		createTableNameFile(newTableList);
+		TableNameFile.generateItem(newTableList,null);
 	}
 	
 	@Override
@@ -191,8 +192,11 @@ public class CreateTableInterceptor extends AbstractInterceptor {
 		if(pk.indexOf(",")>0){
 			sql = sql.replaceAll(" AUTO_INCREMENT", "");
 		}
-		sql += " PRIMARY KEY ("+pk+")";
-		sql +=") ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
+		sql += " PRIMARY KEY ("+pk+")) ";
+		if(table.get("BZS") != null && !"".equals(table.get("BZS"))){
+			sql +="COMMENT='" + table.get("BZS") + "' ";
+		}
+		sql += "ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
 		
 		log.debug("建表语句："+sql);
 		return sql;
@@ -304,61 +308,5 @@ public class CreateTableInterceptor extends AbstractInterceptor {
 		
 		log.debug("建表语句："+sql);
 		return sql;
-	}
-	
-	private void createTableNameFile(List<Map> newTableList) throws FlyingException{
-		/** 解析tablename.xml开始 **/
-		// 构建tablename.xml
-		File tableNameFile = FileUtil.createFile(BuilderUtil.getTableNameXmlPath());
-		// 读取文
-		Document tableNameDocument = FileUtil.readXml(tableNameFile);
-		//添加一个元素
-		Element root = tableNameDocument.getRootElement();
-
-		for(int m=0;m<newTableList.size();m++){
-			//添加一个items节点
-			Element item = root.addElement("item");
-			
-			String bmc = newTableList.get(m).get("BMC")==null?"":newTableList.get(m).get("BMC").toString();
-			String bzs = newTableList.get(m).get("BZS")==null?bmc:newTableList.get(m).get("BZS").toString();
-			item.addAttribute("name",bmc);
-			item.addAttribute("alias", bzs);
-			item.addAttribute("load", "false");
-			
-			Element addElem = item.addElement("op");
-			addElem.addAttribute("alias", "添加【"+bzs+"】");
-			addElem.addAttribute("sqlid", bmc+".insert");
-			addElem.addAttribute("type", "insert");
-			
-			Element addInterceptorRef = addElem.addElement("interceptor-ref");
-			addInterceptorRef.addAttribute("name", "insertInterceptor");
-			
-			Element updateElem = item.addElement("op");
-			updateElem.addAttribute("alias", "修改【"+bzs+"】");
-			updateElem.addAttribute("sqlid", bmc+".update");
-			updateElem.addAttribute("type", "update");
-			
-			Element updateInterceptorRef = updateElem.addElement("interceptor-ref");
-			updateInterceptorRef.addAttribute("name", "updateInterceptor");
-			
-			Element deleteElem = item.addElement("op");
-			deleteElem.addAttribute("alias", "根据ID删除【"+bzs+"】");
-			deleteElem.addAttribute("sqlid", bmc+".delete");
-			deleteElem.addAttribute("type", "delete");
-			
-			Element selectAllElem = item.addElement("op");
-			selectAllElem.addAttribute("alias", "查询【"+bzs+"】所有数据");
-			selectAllElem.addAttribute("sqlid", bmc+".selectAll");
-			selectAllElem.addAttribute("type", "map");
-			
-			Element selectByIdElem = item.addElement("op");
-			selectByIdElem.addAttribute("alias", "查询【"+bzs+"】通过ID查询");
-			selectByIdElem.addAttribute("sqlid", bmc+".selectById");
-			selectByIdElem.addAttribute("type", "object");
-		}
-
-		//写回操作
-		FileUtil.writeXml(tableNameDocument, tableNameFile);
-		log.debug("向tablename.xml注册"+newTableList.size()+"个item");
 	}
 }

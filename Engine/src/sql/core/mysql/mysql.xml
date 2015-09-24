@@ -36,4 +36,12 @@
     <select id="selectByZbzd" resultMap="foreignInfoMap" parameterClass="hashmap">
     	SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME=#ZBMC# AND COLUMN_NAME=#ZBZD#
     </select>
+    
+     <!-- 根据条件查询表 -->
+	 <select id="selectTable" resultClass="hashmap" parameterClass="hashmap">   
+        SELECT TABLE_NAME BMC,TABLE_COMMENT BZS FROM INFORMATION_SCHEMA.TABLES 
+		<isNotEmpty prepend="WHERE" property="filter">
+    		  $filter$
+    	</isNotEmpty>        
+     </select>
 </sqlMap>
