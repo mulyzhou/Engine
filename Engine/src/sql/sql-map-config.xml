@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sqlMapConfig 	PUBLIC "//ZHENGGDIFEI//SQL 1.0" "http://hmjmf-zdf.stor.sinaapp.com/sql-map-config-2.dtd">
 <sqlMapConfig>
  	<settings 
 	cacheModelsEnabled="true" 
@@ -8,7 +7,7 @@
 	errorTracingEnabled="true" 
 	maxRequests="2048" 
 	maxSessions="1024" 
-	maxTransactions="512" 
+	maxTransactions="1024" 
 	useStatementNamespaces="true" 
 	/>
 </sqlMapConfig>
