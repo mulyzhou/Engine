@@ -33,11 +33,11 @@ public class BuilderUtil {
 
 			RegisterTableToDB.insert(needGenerateTable.get(x));// (2)注册到数据库T_SYS_RESOURCE
 
-			IbatisXml.insert(needGenerateTable.get(x));// (3)根据模板创建此表的Ibatis配置文件
+			IbatisXml.insert(needGenerateTable.get(x),null);// (3)根据模板创建此表的Ibatis配置文件
 
 			SqlMapConfig.insert(needGenerateTable.get(x));// (4)注册到ibatis配置文件中sql-map-config-core.xml
 
-			ExtPage.insert(needGenerateTable.get(x));// (5)根据模板生成前台页面
+			ExtPage.insert(needGenerateTable.get(x),null);// (5)根据模板生成前台页面
 		}
 	}
 

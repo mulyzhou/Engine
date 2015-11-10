@@ -34,19 +34,25 @@ public class IbatisXml {
 	 * @param item tablename中的配置项
 	 * @throws Exception 
 	 */
-	public static void insert(Item item) throws Exception {
+	public static void insert(Item item,String dir) throws Exception {
 		log.debug("生成ibatis配置文件开始");
 
 		if("mysql".equals(StaticVariable.DB)){
-			EngineParameter ep = new EngineParameter("mysql.selectTableByBmc");
+			String schema = StaticVariable.DB_URL.substring(StaticVariable.DB_URL.lastIndexOf("/")  +1);
+			if(schema.contains("?")){
+				schema = schema.substring(0,schema.indexOf("?"));
+			}
+			
+			EngineParameter ep = new EngineParameter("mysql.selectTable");
+			ep.putParam("filter", "TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '"+ schema +"' AND TABLE_NAME = '" + item.getName() + "'");
 			ep.setCommandType("object");
-			ep.putParam("BMC", item.getName());
+			
 			Engine.execute(ep);
 			
 			Object table = ep.getResult("data");//根据表名称，获取表信息
 			
 			if(table != null && table instanceof Map && ((Map)table).size()>0){//t_base_table中，存在此表，则执行默认操作
-				mysqlMode(item);//执行mysql个性方式
+				commonMode(item,dir);//执行mysql个性方式
 				log.debug("通过mysql的元数据，生成ibaits文件");
 			}
 		}else if("oracle".equals(StaticVariable.DB)){
@@ -58,7 +64,7 @@ public class IbatisXml {
 			Object table = ep.getResult("data");//根据表名称，获取表信息
 			
 			if(table != null && table instanceof Map && ((Map)table).size()>0){//t_base_table中，存在此表，则执行默认操作
-				oracleMode(item);//执行oracle个性方式
+				commonMode(item,dir);//执行oracle个性方式
 				log.warn("通过oracle的元数据，生成ibatis文件，未实现！");
 			}
 		}else{
@@ -87,7 +93,7 @@ public class IbatisXml {
 	 * @param item
 	 * @throws Exception 
 	 */
-	private static void commonMode(Item item) throws Exception {
+	private static void commonMode(Item item,String dir) throws Exception {
 		String tableName = item.getName();// 表名
 
 		String chineseName = item.getAlias();// 表中文名
@@ -314,27 +320,14 @@ public class IbatisXml {
 		template = template.replaceAll("&UPDATEFIELD&", updateFieldStr);
 		// 中文名称
 		template = template.replaceAll("&CNNAME&", chineseName);
-		// 将修改好的配置文件放入系统
-		String fileName = BuilderUtil.getIbatisXmlPath(tableName);
-		FileUtil.stringToFile(template, FileUtil.createFile(fileName));
-	}
-
-	/**
-	 * 通过读取mysql数据的元数据，进行生成工作
-	 * 
-	 * @param item
-	 * @throws Exception 
-	 */
-	private static void mysqlMode(Item item) throws Exception {
-		commonMode(item);
-	}
-	/**
-	 * 通过读取mysql数据的元数据，进行生成工作
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
-	private static void oracleMode(Item item) throws Exception {
-		commonMode(item);
+		if(dir == null){
+			// 将修改好的配置文件放入系统
+			String fileName = BuilderUtil.getIbatisXmlPath(tableName);
+			FileUtil.stringToFile(template, FileUtil.createFile(fileName));
+		}else{
+			// 将修改好的配置文件放入系统
+			String fileName = dir + "/"+ tableName + ".xml";
+			FileUtil.stringToFile(template, FileUtil.createFile(fileName));
+		}
 	}
 }

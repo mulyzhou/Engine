@@ -22,6 +22,13 @@ public class Item {
 	//操作列表
 	private Map<String,Operation> mapOperation = new HashMap<String,Operation>();
 	
+	public Item(){}
+	
+	public Item(String name ,String alias){
+		this.name = name;
+		this.alias = alias;
+	}
+	
 	public String getName() {
 		return name;
 	}

@@ -45,6 +45,8 @@ public class EngineInit {
 				.getProperty("flying.SSO_AUTH");
 		String flyinglog = pp.getProperty("flying.LOG") == null ? "" : pp
 				.getProperty("flying.LOG");
+		String isRedis = pp.getProperty("flying.REDIS") == null ? "" : pp
+				.getProperty("flying.REDIS");
 		String rootmenu = pp.getProperty("flying.ROOT_MENU") == null ? "" : pp
 				.getProperty("flying.ROOT_MENU");
 		try{
@@ -88,6 +90,11 @@ public class EngineInit {
 			if (!"".equals(flyinglog)
 					&& ("true".equals(flyinglog) || "false".equals(flyinglog))) {// 设置调试模式
 				StaticVariable.LOG = Boolean.parseBoolean(flyinglog);
+			}
+			
+			if (!"".equals(isRedis)
+					&& ("true".equals(isRedis) || "false".equals(isRedis))) {// 设置启动redis
+				StaticVariable.REDIS = Boolean.parseBoolean(isRedis);
 			}
 			
 			if (!"".equals(rootmenu)) {// 生产的根节点ID

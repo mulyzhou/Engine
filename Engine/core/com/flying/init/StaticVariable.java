@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ShardedJedisPool;
+
 import com.flying.task.ITask;
 /**
  * 
@@ -35,6 +38,8 @@ public class StaticVariable {
 	public static boolean SSO_AUTH = false;
 	//数据库日志开关
 	public static boolean LOG = false;
+	//redis缓存开关，true：开启	false：关闭
+	public static boolean REDIS = false;
 	//生产的根节点ID
 	public static String ROOT_MENU = "";
 	//是否使用maven管理
@@ -48,6 +53,8 @@ public class StaticVariable {
 	//访问配置缓存
 	public static final Map<String,Item> FLYINGCONFIG = new HashMap<String,Item>();
 	//拦截器集合
+	public static final List INTERCEPTOR_SYSTEM = new ArrayList();
+	//拦截器集合
 	public static final Map<String,List> INTERCEPTOR_COLLECTION = new HashMap<String,List>();
 	//初始化运行的集合
 	public static final List<ITask> TASKS = new ArrayList<ITask>();
@@ -57,4 +64,8 @@ public class StaticVariable {
 	public static final Map<String,String> LOGOUT_WHITE_LIST = new HashMap<String,String>();
 	//存放session
 	public static final Map<String,Object> SESSIONS = new HashMap<String,Object>();
+	//Redis单机客户端连接对象池
+	public static JedisPool JEDIS_POOL = null;
+	//Redis多机客户端连接对象
+	public static ShardedJedisPool SHARDED_JEDIS_POOL = null;
 }

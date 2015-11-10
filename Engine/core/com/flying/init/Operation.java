@@ -1,5 +1,7 @@
 package com.flying.init;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class Operation {
 	private String sqlid;
 	//执行sqlid的类型
 	private String type;
+	//redis过期时间
+	private int expire;
 	//是否需要进行验证
 	private boolean validate;
 	//批量操作属性
@@ -54,6 +58,12 @@ public class Operation {
 	public void setType(String type) {
 		this.type = type;
 	}
+	public int getExpire() {
+		return expire;
+	}
+	public void setExpire(int expire) {
+		this.expire = expire;
+	}
 	public boolean isValidate() {
 		return validate;
 	}
@@ -71,7 +81,6 @@ public class Operation {
 			} catch (IllegalAccessException e) {
 				log.error("系统实例化验证拦截类失败",e);
 			}
-			
 		}
 	}
 	public List<Interceptor> getInterceptorList() {

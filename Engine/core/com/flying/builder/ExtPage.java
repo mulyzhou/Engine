@@ -34,19 +34,25 @@ public class ExtPage{
 	 * @param item
 	 * @throws Exception
 	 */
-	public static void insert(Item item) throws Exception{
+	public static void insert(Item item,String dir) throws Exception{
 		log.debug("生成前台js文件开始");
 
 		if("mysql".equals(StaticVariable.DB)){
-			EngineParameter ep = new EngineParameter("mysql.selectTableByBmc");
+			String schema = StaticVariable.DB_URL.substring(StaticVariable.DB_URL.lastIndexOf("/")  +1);
+			if(schema.contains("?")){
+				schema = schema.substring(0,schema.indexOf("?"));
+			}
+			
+			EngineParameter ep = new EngineParameter("mysql.selectTable");
+			ep.putParam("filter", "TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '"+ schema +"' AND TABLE_NAME = '" + item.getName() + "'");
 			ep.setCommandType("object");
-			ep.putParam("BMC", item.getName());
+			
 			Engine.execute(ep);
 			
 			Object table = ep.getResult("data");//根据表名称，获取表信息
 			
 			if(table != null && table instanceof Map && ((Map)table).size()>0){//t_base_table中，存在此表，则执行默认操作
-				mysqlMode(item);//执行mysql个性方式
+				commonMode(item,dir);
 				log.debug("通过mysql的元数据，生成前台文件");
 			}
 		}else if("oracle".equals(StaticVariable.DB)){
@@ -58,7 +64,7 @@ public class ExtPage{
 			Object table = ep.getResult("data");//根据表名称，获取表信息
 			
 			if(table != null && table instanceof Map && ((Map)table).size()>0){//t_base_table中，存在此表，则执行默认操作
-				oracleMode(item);//执行oracle个性方式
+				commonMode(item,dir);
 				log.warn("通过oracle的元数据，生成前台文件，未实现！");
 			}
 		}else{
@@ -86,7 +92,7 @@ public class ExtPage{
 	 * @param item
 	 * @throws Exception
 	 */
-	private static void commonMode(Item item) throws Exception{
+	private static void commonMode(Item item,String dir) throws Exception{
 		
 		JSONObject jsonPage = new JSONObject();
 		String en = item.getName();
@@ -177,27 +183,15 @@ public class ExtPage{
 		jsonPage.put("btns", btns);//按钮集合
 		jsonPage.put("columns", columns);//列集合
 		
-		// 将修改好的配置文件放入系统
-		String fileName = BuilderUtil.getPagePath(en);
-		FileUtil.stringToFile(jsonPage.toString(),FileUtil.createFile(fileName));
-	}
-	/**
-	 * mysql模式，生成前台文件
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
-	private static void mysqlMode(Item item)throws Exception{
-		commonMode(item);
-	}
-	/**
-	 * oracle模式，生成前台文件
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
-	private static void oracleMode(Item item) throws Exception{
-		commonMode(item);
+		if(dir == null){
+			// 将修改好的配置文件放入系统
+			String fileName = BuilderUtil.getPagePath(en);
+			FileUtil.stringToFile(jsonPage.toString(),FileUtil.createFile(fileName));
+		}else{
+			// 将修改好的配置文件放入系统
+			String fileName = dir + "/"+ en + ".js";
+			FileUtil.stringToFile(jsonPage.toString(),FileUtil.createFile(fileName));
+		}
 	}
 	
 	private static Map createColumn(String bmc,Map column) throws Exception{
@@ -323,7 +317,7 @@ public class ExtPage{
 	 * @param s
 	 * @return
 	 */
-	public static String formatDouble(double v, int s)
+	private static String formatDouble(double v, int s)
     {
         String retValue = null;
         DecimalFormat df = new DecimalFormat();

@@ -25,6 +25,8 @@ public class EngineParameter {
 	private String fileDownloadName = null;
 	//调整页面名称
 	private String redirectPageName = null;
+	//设置redis的过期时间,默认不过期
+	private int redisExpire = -1;
 	//是否将执行改成空执行
 	private boolean isSpace = false;
 	//是否中断执行
@@ -189,7 +191,20 @@ public class EngineParameter {
 	public void setRedirectPageName(String redirectPageName) {
 		this.redirectPageName = redirectPageName;
 	}
-	
+	/**
+	 * 获取redis缓存的过期值
+	 * @return redisExpire -1：不过期
+	 */
+	public int getRedisExpire() {
+		return redisExpire;
+	}
+	/**
+	 * 设置redis缓存的过期值
+	 * @param redisExpire
+	 */
+	public void setRedisExpire(int redisExpire) {
+		this.redisExpire = redisExpire;
+	}
 	/**
 	 * 返回跳过主执行标示
 	 * 

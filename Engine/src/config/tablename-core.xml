@@ -4,7 +4,14 @@
 		<logout-whiteList-item name="T_BASE_TABLE.space" />
 		<logout-whiteList-item name="T_BASE_TABLE.deleteByBmc" />
 	</whiteList>
+	<startup>
+		<startup-item class="com.flying.task.RedisPoolInitTask"/>
+	</startup>
 	<interceptors>
+		<interceptor-system>
+			<interceptor
+				class="com.flying.Interceptor.impl.RedisInterceptor" />
+		</interceptor-system>
 		<interceptor-stack name="insertInterceptor">
 			<interceptor
 				class="com.flying.Interceptor.impl.BooleanParameterSwitchInterceptor" />

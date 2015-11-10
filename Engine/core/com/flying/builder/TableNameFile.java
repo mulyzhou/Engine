@@ -156,6 +156,37 @@ public class TableNameFile {
 	 * @param tableNameDocument
 	 */
 	private static void baseParse(Document tableNameDocument){
+		//系统级拦截器
+		List interceptorSystemList = tableNameDocument.selectNodes("/tablename/interceptors/interceptor-system");
+		// 遍历
+		Iterator interceptorSystemIter = interceptorSystemList.iterator();
+		while (interceptorSystemIter.hasNext()) {
+			Element systemElement = (Element) interceptorSystemIter.next();
+			//获取拦截器
+			List<Element> systemInterceptorsElement = systemElement.elements("interceptor");
+			//遍历节点
+			for(Iterator systemInters=systemInterceptorsElement.iterator();systemInters.hasNext();){
+				Element systemInter = (Element) systemInters.next();
+				//获取拦截
+				Interceptor systemInterceptor;
+				try {
+					if(FlyingUtil.validateData(systemInter.attribute("class")) && FlyingUtil.validateData(systemInter.attribute("class").getText())){
+						systemInterceptor = (Interceptor)(Class.forName(systemInter.attribute("class").getText().trim()).newInstance());
+						systemInterceptor.initLog(systemInterceptor.getClass());//初始化日志方法
+						StaticVariable.INTERCEPTOR_SYSTEM.add(systemInterceptor);
+					}else{
+						log.warn("interceptor-system中有class为空的拦截器！");
+						continue;
+					}
+				} catch (ClassNotFoundException e) {
+					log.error("找不到此类："+systemInter.attribute("class").getText(),e);
+				} catch (InstantiationException e) {
+					log.error("实例化："+systemInter.attribute("class").getText()+"失败！",e);
+				} catch (IllegalAccessException e) {
+					log.error("实例化："+systemInter.attribute("class").getText()+"失败！",e);
+				}
+			}
+		}
 		//拦截器集合
 		List interceptorStackList = tableNameDocument.selectNodes("/tablename/interceptors/interceptor-stack");
 		// 遍历
@@ -232,6 +263,8 @@ public class TableNameFile {
 					operation.setType(op.attribute("type").getText());
 					//执行的类型validate 可填
 					operation.setValidate(Boolean.parseBoolean(op.attribute("validate")==null?"false":op.attribute("validate").getText()));
+					//redis过期时间
+					operation.setExpire(Integer.parseInt(op.attribute("expire")==null?"-1":op.attribute("expire").getText()));
 				}else{
 					log.warn("解析的op的sqlid为空 ！");
 					continue;
@@ -400,6 +433,9 @@ public class TableNameFile {
 		/** 解析tablename.xml开始 **/
 		// 构建tablename.xml
 		File tableNameFile = null;
+		//是否通过系统生成
+		String isGen = "false";
+		
 		if(dir == null){
 			//检查有tablename-module.xml
 			TableNameFile.checkTablename();
@@ -414,6 +450,8 @@ public class TableNameFile {
 			tableNameDocument.addElement("tablename");//创建根节点
 			
 			FileUtil.writeXml(tableNameDocument, tableNameFile);//写回操作
+			
+			isGen = "true";
 		}
 		
 		// 读取文
@@ -429,7 +467,7 @@ public class TableNameFile {
 			String bzs = newTableList.get(m).get("BZS")==null?bmc:newTableList.get(m).get("BZS").toString();
 			item.addAttribute("name",bmc);
 			item.addAttribute("alias", bzs);
-			item.addAttribute("load", "false");
+			item.addAttribute("load", isGen);
 			
 			Element addElem = item.addElement("op");
 			addElem.addAttribute("alias", "添加【"+bzs+"】");

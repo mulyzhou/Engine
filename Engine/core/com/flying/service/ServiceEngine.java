@@ -33,6 +33,7 @@ public class ServiceEngine implements EngineIface{
 	private int offset = -1;
 	
 	public ServiceEngine() {
+		
 	}
 	
 	public IDAO getDao() {
@@ -104,11 +105,19 @@ public class ServiceEngine implements EngineIface{
 				 ep.setCommandType(operation.getType());
 				 log.debug("执行命令："+command+" 	执行类型："+ operation.getType()+"	 "+operation.getAlias());
 			}
-			
+			//设置redis的过期时间
+			ep.setRedisExpire(operation.getExpire());
+			//添加系统触发器
+			this.interceptors = new ArrayList();
+			if(StaticVariable.INTERCEPTOR_SYSTEM.size() > 0){
+				this.interceptors.addAll(StaticVariable.INTERCEPTOR_SYSTEM);
+			}
 			//获取此操作下得拦截器
-			this.interceptors = operation.getInterceptorList()== null ? new ArrayList() : operation.getInterceptorList();
+			this.interceptors.addAll(operation.getInterceptorList()== null ? new ArrayList() : operation.getInterceptorList());
 			if(interceptors.size() == 0){
 				log.debug("执行命令："+command+" 没有注册拦截器！");
+			}else if(operation.getInterceptorList().size() == 0){
+				log.debug("执行命令："+command+" 注册了系统拦截器！");
 			}
 		}
 	}

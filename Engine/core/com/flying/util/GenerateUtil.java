@@ -13,6 +13,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.flying.builder.ExtPage;
+import com.flying.builder.IbatisXml;
 import com.flying.builder.TableNameFile;
 import com.flying.exception.FlyingException;
 import com.flying.init.EngineInit;
@@ -30,25 +32,91 @@ public class GenerateUtil {
 	public static void main(String[] args) {
 		EngineInit.appStart();
 	}
+	/**
+	 * 系统手动生成
+	 * 生成前台，后台，数据库
+	 */
+	public static void generateModule(String dir){
+		//生成tablename配置文件
+		generateModuleTablename(dir);
+		//生成后台ibatis文件
+		generateModuleIbatisXml(dir);
+		//生成前台ext文件
+		generateModuleExtPage(dir);
+	}
+	
+	/**
+	 * 根据模块生成Ext前台文件
+	 * @param dir
+	 */
+	public static void generateModuleExtPage(String dir){
+		//根据模块名称，获取模块下对应的表
+		List<Map> tableList = selectTableByModule();
+		
+		for (int i = 0; i < tableList.size(); i++) {
+			Map tableMap = tableList.get(i);
+			String tableName = tableMap.get("BMC").toString().toUpperCase();
+			if(tableName.contains("_"+ StaticVariable.MODULE.toUpperCase() + "_")){
+				Item item = new Item(tableMap.get("BMC")==null?"":tableMap.get("BMC").toString(),tableMap.get("BZS")==null?"":tableMap.get("BZS").toString());
+				try {
+					ExtPage.insert(item,dir);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	/**
+	 * 生成Ext前台文件
+	 * @param dir
+	 */
+	public static void generateExtPage(Item item ,String dir){
+		try {
+			ExtPage.insert(item,dir);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 根据模块生成后台ibatis文件
+	 * @param dir
+	 */
+	public static void generateModuleIbatisXml(String dir){
+		//根据模块名称，获取模块下对应的表
+		List<Map> tableList = selectTableByModule();
+		
+		for (int i = 0; i < tableList.size(); i++) {
+			Map tableMap = tableList.get(i);
+			String tableName = tableMap.get("BMC").toString().toUpperCase();
+			if(tableName.contains("_"+ StaticVariable.MODULE.toUpperCase() + "_")){
+				Item item = new Item(tableMap.get("BMC")==null?"":tableMap.get("BMC").toString(),tableMap.get("BZS")==null?"":tableMap.get("BZS").toString());
+				try {
+					IbatisXml.insert(item,dir);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	/**
+	 * 生成后台ibatis文件
+	 * @param dir
+	 */
+	public static void generateIbatisXml(Item item ,String dir){
+		try {
+			IbatisXml.insert(item,dir);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * 默認生成tablename-sub.xml
 	 */
 	public static void generateModuleTablename(String dir){
-		String schema = StaticVariable.DB_URL.substring(StaticVariable.DB_URL.lastIndexOf("/")  +1);
-		if(schema.contains("?")){
-			schema = schema.substring(0,schema.indexOf("?"));
-		}
+		//根据模块名称，获取模块下对应的表
+		List<Map> tableList = selectTableByModule();
 		
-		EngineParameter ep = new EngineParameter("mysql.selectTable");
-		ep.putParam("filter", "TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '"+ schema +"'");
-		try {
-			Engine.execute(ep);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
-		List<Map> tableList = (List<Map>) ep.getResult("data");
 		List<Map> newTableList = new ArrayList<Map>();
 		for (int i = 0; i < tableList.size(); i++) {
 			Map tableMap = tableList.get(i);
@@ -102,33 +170,6 @@ public class GenerateUtil {
 				}
 			}
 		}
-	}
-	/**
-	 * 获取指定长度随机简体中文
-	 * 
-	 * @param len
-	 *            int 长度
-	 * @return String
-	 */
-	public static String getRandomJianHan(int len) {
-		String ret = "";
-		for (int i = 0; i < len; i++) {
-			String str = null;
-			int hightPos, lowPos; // 定义高低位
-			Random random = new Random();
-			hightPos = (176 + Math.abs(random.nextInt(39))); // 获取高位值
-			lowPos = (161 + Math.abs(random.nextInt(93))); // 获取低位值
-			byte[] b = new byte[2];
-			b[0] = (new Integer(hightPos).byteValue());
-			b[1] = (new Integer(lowPos).byteValue());
-			try {
-				str = new String(b, "GBk"); // 转成中文
-			} catch (UnsupportedEncodingException ex) {
-				ex.printStackTrace();
-			}
-			ret += str;
-		}
-		return ret;
 	}
 
 	/**
@@ -246,10 +287,10 @@ public class GenerateUtil {
 				}
 				tableMapInitStr.append(sub + Table + "Map.put(\""
 						+ column.get("ZDMC").toString().toUpperCase()
-						+ "\", \"" + getRandomJianHan(len) + "\");\n");
+						+ "\", \"" + FlyingUtil.getRandomJianHan(len) + "\");\n");
 				tableMapUpdateStr.append(sub + Table + "Map.put(\""
 						+ column.get("ZDMC").toString().toUpperCase()
-						+ "\", \"" + getRandomJianHan(len) + "\");\n");
+						+ "\", \"" + FlyingUtil.getRandomJianHan(len) + "\");\n");
 				assertEqualsTableMapStr.append("Assert.assertEquals(" + sub
 						+ Table + "Map.get(\""
 						+ column.get("ZDMC").toString().toUpperCase()
@@ -389,5 +430,23 @@ public class GenerateUtil {
 
 		// 保持到文件
 		FileUtil.writeXml(junitDocument, junitConfigFile);
+	}
+	
+	private static List<Map> selectTableByModule(){
+		String schema = StaticVariable.DB_URL.substring(StaticVariable.DB_URL.lastIndexOf("/")  +1);
+		if(schema.contains("?")){
+			schema = schema.substring(0,schema.indexOf("?"));
+		}
+		
+		EngineParameter ep = new EngineParameter("mysql.selectTable");
+		ep.putParam("filter", "TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '"+ schema +"'");
+		try {
+			Engine.execute(ep);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		return (List<Map>) ep.getResult("data");
+		
 	}
 }
