@@ -71,6 +71,15 @@ public class PermissionFilter implements Filter {
 				session = req.getSession(true);
 				ep.putParam("session", session);
 			}
+		}else if("T_XTGL_USER.login".equals(ep.getCommand())){
+			session = req.getSession();//获取session
+			session.invalidate();//清空session
+			Cookie cookie = req.getCookies()[0];//获取cookie
+			cookie.setMaxAge(0);//让cookie过期
+
+			session = req.getSession(true);
+			ep.putParam("session", session);
+			
 		}else if(!StaticVariable.AUTHENTICATION){
 			log.debug("无需权限验证模式运行！");
 			ep.putParam("session", session);

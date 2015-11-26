@@ -46,7 +46,9 @@ public class RedisInterceptor extends AbstractInterceptor {
 		    		Iterator keyIter = keySet.iterator();
 		    		while(keyIter.hasNext()){
 		    			String keyName = (String) keyIter.next();
-		    			jedis.del(keyName);
+		    			if(jedis.ttl(keyName) == -1){
+			    			jedis.del(keyName);
+		    			}
 		    			log.info("执行了"+ ep.getCommand() +"操作，删除["+ keyName +"]缓存！");
 		    		}
 		    	}
