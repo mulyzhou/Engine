@@ -160,9 +160,6 @@ public class BaseDAO extends IbatisBaseDAO implements IDAO {
 	 */
 	public List<Object> selectList(EngineParameter ep)
 			throws Exception {
-		ep.removeParam("start");//删除分页中的开始
-		ep.removeParam("limit");//删除分页中的长度
-		
 		List<Object> listObj = smcTemplate.queryForList(ep.getCommand(),
 				ep.getParamMap());
 		log.debug("执行 "+ep.getCommand()+" 查询列表操作，不含分页信息");

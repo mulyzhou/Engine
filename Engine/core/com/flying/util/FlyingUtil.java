@@ -93,7 +93,11 @@ public class FlyingUtil {
  				List beforeJsonObject = (List) jsonObject.get(key);
  				List afterJsonObject = new ArrayList();
  				for(int i = 0;i<beforeJsonObject.size();i++){
- 					afterJsonObject.add(changeJsonObject2HashMap((JSONObject) beforeJsonObject.get(i)));
+ 					if(beforeJsonObject.get(i) instanceof JSONObject){
+ 	 					afterJsonObject.add(changeJsonObject2HashMap((JSONObject) beforeJsonObject.get(i)));
+ 					}else{
+ 	 					afterJsonObject.add(beforeJsonObject.get(i));
+ 					}
  				}
  				map.put(key, afterJsonObject);
  			}else if(jsonObject.get(key) instanceof Map){//如果是一个Map集合

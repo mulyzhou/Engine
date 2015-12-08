@@ -51,6 +51,7 @@ public class SqlConditionFilter implements Filter {
 		 //limit = start+limit;
 		 
 		 if(ep.getFileDownloadName()== null){
+			 /*造成后果，ep.paramMap中，永远有start，limit值;当我们后台使用到了start，limit，却又不需要前台默认值时，需要手动删除start，limit两个属性*/
 			 ep.putParam("start", start);
 			 ep.putParam("limit", limit);
 		 }else{
