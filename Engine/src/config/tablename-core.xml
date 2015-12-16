@@ -82,7 +82,6 @@
 	</item>
 	<item name="T_BASE_FIELD" alias="字段管理" load="true">
 		<op alias="添加【字段信息】" sqlid="T_BASE_FIELD.insert" type="insert">
-			<interceptor-ref name="insertInterceptor" />
 		</op>
 		<op alias="修改【字段信息】" sqlid="T_BASE_FIELD.update" type="update">
 			<interceptor-ref name="updateInterceptor" />
@@ -132,10 +131,8 @@
 	</item>
 	<item name="T_BASE_LOG" alias="系统日志表" load="true">
 		<op alias="添加【系统日志表】" sqlid="T_BASE_LOG.insert" type="insert">
-			<interceptor-ref name="insertInterceptor" />
 		</op>
 		<op alias="修改【系统日志表】" sqlid="T_BASE_LOG.update" type="update">
-			<interceptor-ref name="updateInterceptor" />
 		</op>
 		<op alias="根据ID删除【系统日志表】" sqlid="T_BASE_LOG.delete" type="delete" />
 		<op alias="查询【系统日志表】所有数据" sqlid="T_BASE_LOG.selectAll" type="map" />

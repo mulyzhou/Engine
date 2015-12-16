@@ -33,7 +33,11 @@ public class ServiceEngine implements EngineIface{
 	private int offset = -1;
 	
 	public ServiceEngine() {
-		
+		if(StaticVariable.MONGODB){
+			this.setDao((IDAO)Engine.ac.getBean("MongoDBDAO"));
+		}else{
+			this.setDao((IDAO)Engine.ac.getBean("BaseDAO"));
+		}
 	}
 	
 	public IDAO getDao() {
@@ -71,7 +75,6 @@ public class ServiceEngine implements EngineIface{
 			}
 		}
 	}
-	
 	/**
 	 * 根据传递的参数，获取本操作的拦截器
 	 * 

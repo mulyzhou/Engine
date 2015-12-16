@@ -55,9 +55,9 @@
 	</aop:config>
 
 	<bean id="ServiceEngine" class="com.flying.service.ServiceEngine" scope="prototype">
-		<property name="dao">
-			<ref bean="BaseDAO" />
-		</property>
+	</bean>
+	
+	<bean id="MongoDBDAO" class="com.flying.dao.MongoDBDAO">
 	</bean>
 	
 	<bean id="BaseDAO" class="com.flying.dao.BaseDAO">

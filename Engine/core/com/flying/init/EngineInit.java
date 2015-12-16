@@ -5,14 +5,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.sql.rowset.serial.SerialArray;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.flying.builder.TableNameFile;
+import com.flying.dao.MongoDBDAO;
 import com.flying.exception.FlyingException;
 import com.flying.logging.Log;
 import com.flying.logging.LogFactory;
 import com.flying.service.Engine;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoException;
+import com.mongodb.ServerAddress;
 
 public class EngineInit {
 	private static Log log = LogFactory.getLog(EngineInit.class);
@@ -47,6 +54,8 @@ public class EngineInit {
 				.getProperty("flying.LOG");
 		String isRedis = pp.getProperty("flying.REDIS") == null ? "" : pp
 				.getProperty("flying.REDIS");
+		String mongoDB = pp.getProperty("flying.MONGODB") == null ? "" : pp
+				.getProperty("flying.MONGODB");
 		String rootmenu = pp.getProperty("flying.ROOT_MENU") == null ? "" : pp
 				.getProperty("flying.ROOT_MENU");
 		try{
@@ -97,6 +106,11 @@ public class EngineInit {
 				StaticVariable.REDIS = Boolean.parseBoolean(isRedis);
 			}
 			
+			if (!"".equals(mongoDB)
+					&& ("true".equals(mongoDB) || "false".equals(mongoDB))) {// 设置启动mongoDB
+				StaticVariable.MONGODB = Boolean.parseBoolean(mongoDB);
+			}
+			
 			if (!"".equals(rootmenu)) {// 生产的根节点ID
 				StaticVariable.ROOT_MENU = rootmenu;
 			} 
@@ -145,21 +159,72 @@ public class EngineInit {
 
 		log.debug("本系统使用的数据库是：" + StaticVariable.DB);
 	}
+	
+	/**
+	 * 根据配置初始化mongoDB
+	 */
+	static{
+		if(StaticVariable.MONGODB){
+			InputStream in;// 文件输入流
+			Properties pp = new Properties();// 数据库属性
+			try {
+				in = Thread.currentThread().getContextClassLoader().getResourceAsStream("sql/mongodb.properties");// 将文件编程输入流
+				pp.load(in);// 将输入流编程属性文件
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			String ip = pp.getProperty("IP") == null ? "127.0.0.1" : pp
+    				.getProperty("IP");
+            String port = pp.getProperty("PORT") == null ? "27017" : pp
+    				.getProperty("PORT");
+            String dbName = pp.getProperty("dbname") == null ? StaticVariable.ALIAS : pp
+    				.getProperty("dbname");
+            int connectionsPerHost = pp.getProperty("connectionsPerHost") == null ? 50 : Integer.parseInt(pp
+    				.getProperty("connectionsPerHost"));
+            int threadsAllowedToBlockForConnectionMultiplier = pp.getProperty("threadsAllowedToBlockForConnectionMultiplier") == null ? 50 : Integer.parseInt(pp
+    				.getProperty("threadsAllowedToBlockForConnectionMultiplier"));
+            int maxWaitTime = pp.getProperty("maxWaitTime") == null ? 120000 : Integer.parseInt(pp
+    				.getProperty("maxWaitTime"));
+            int connectTimeout = pp.getProperty("connectTimeout") == null ? 60000 : Integer.parseInt(pp
+    				.getProperty("connectTimeout"));
+            //连接路径
+            ServerAddress sd = new ServerAddress(ip,Integer.parseInt(port));
+            //连接配置
+			MongoClientOptions.Builder build = new MongoClientOptions.Builder();    
+            build.connectionsPerHost(connectionsPerHost);   //与目标数据库能够建立的最大connection数量为50
+            build.threadsAllowedToBlockForConnectionMultiplier(threadsAllowedToBlockForConnectionMultiplier); //如果当前所有的connection都在使用中，则每个connection上可以有50个线程排队等待   
+            /* 
+             * 一个线程访问数据库的时候，在成功获取到一个可用数据库连接之前的最长等待时间为2分钟 
+             * 这里比较危险，如果超过maxWaitTime都没有获取到这个连接的话，该线程就会抛出Exception 
+             * 故这里设置的maxWaitTime应该足够大，以免由于排队线程过多造成的数据库访问失败 
+             */  
+            build.maxWaitTime(maxWaitTime);  
+            build.connectTimeout(connectTimeout);    //与数据库建立连接的timeout设置为1分钟   
+              
+            MongoClientOptions myOptions = build.build(); 
+            
+            try {  
+                //数据库客户端实例   
+            	MongoDBDAO.mongoClient = new MongoClient(sd, myOptions);   
+            	//数据库实例名
+            	MongoDBDAO.DB_NAME = dbName;
+            } catch (MongoException e){  
+                e.printStackTrace();  
+            }  
+           
+			log.debug("mongoDB初始化完成！");	
+		}
+	}
 	/**
 	 * 
 	 */
 	public static void appStart(){
 		log.info("java应用系统初始化！");
-		String applicationContext = "config/applicationContext.xml";
-		//xfire的webservice支持
-		//String xfireContext = "org/codehaus/xfire/spring/xfire.xml";
-		
-		/* 构建spring运行环境 */
-		ApplicationContext wac = new ClassPathXmlApplicationContext(
-				new String[] { applicationContext });//,xfireContext }); // WebApplicationContextUtils.getWebApplicationContext(application);
-
-		/* 设置引擎运行环境 */
-		Engine.ac = wac;
+		//通用的引导
+		webStart();
 		
 		//解析tablename文件
 		try {

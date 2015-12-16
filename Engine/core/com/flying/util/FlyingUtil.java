@@ -163,7 +163,32 @@ public class FlyingUtil {
 	}
 	
 	public static void main(String[] args){
-		String str = null;
-		System.out.println(FlyingUtil.validateNull(str));
+		Map map1 = new HashMap();
+		Map map2 = new HashMap();
+		Map map3 = new HashMap();
+		
+		map1.put("a1", "abc");
+		map1.put("b1", 123);
+		map1.put("c1", true);
+		
+		map3.put("a3", "abcd");
+		map3.put("b3", 1234);
+		map3.put("c3", false);
+		
+		List list1 = new ArrayList();
+		list1.add(1);
+		list1.add(2);
+		list1.add(3);
+		list1.add("a");
+		list1.add("b");
+		list1.add("c");
+		
+		map1.put("map3", map3);
+		map1.put("list", list1);
+		
+		change(map1,map2);
+		map3.remove("a3");
+		System.out.println(map1);
+		System.out.println(map2);
 	}
 }

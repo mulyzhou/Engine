@@ -40,6 +40,8 @@ public class StaticVariable {
 	public static boolean LOG = false;
 	//redis缓存开关，true：开启	false：关闭
 	public static boolean REDIS = false;
+	//mongodb缓存开关，true：开启	false：关闭
+	public static boolean MONGODB = false;
 	//生产的根节点ID
 	public static String ROOT_MENU = "";
 	//是否使用maven管理
