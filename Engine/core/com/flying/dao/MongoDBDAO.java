@@ -43,7 +43,7 @@ public class MongoDBDAO implements IDAO{
 	public static String DB_NAME = null;
 	
 	private static Hashtable SEARCH_CATHE = new Hashtable();
-	
+	private static String regeNullJson = "\\{\\}";
 	private static String regeJsonArray = "^\\[([\"|']{0,1}[\\w]+[\"|']{0,1},{0,1})+\\]$";
 	
 	private static String regeJsonObject = "^\\{([\"|']{0,1}[\\w]+[\"|']{0,1}:[\"|']{0,1}([\\w]+|#)[\"|']{0,1},{0,1})+\\}$";  
@@ -59,10 +59,15 @@ public class MongoDBDAO implements IDAO{
 		//jongo处理过程
 		DB db = mongoClient.getDB(DB_NAME);
 		Jongo jongo = new Jongo(db);
+		
 		MongoCollection moColl =jongo.getCollection(command.substring(0,command.indexOf(".")));
 		if(moColl != null){
 			if(MongoDbBuilder.BO.get(command+".field") == null){
-				wr = moColl.insert(filterParam(ep.getParamMap()));
+				log.warn("【"+command+"】 : mongoDB命令:" + command + " 未定义，无法执行！");
+			}else if("".equals(MongoDbBuilder.BO.get(command+".field").toString()) || Pattern.matches(regeNullJson,MongoDbBuilder.BO.get(command+".field").toString())){
+				Map insertMap = filterParam(ep.getParamMap());
+				wr = moColl.insert(insertMap);
+				log.debug("【"+command+"】 : moColl.insert("+ insertMap.toString() +")");
 			}else if(Pattern.matches(regeJsonArray,MongoDbBuilder.BO.get(command+".field").toString())){
 				JSONArray fieldObjArr = JSONArray.fromObject(MongoDbBuilder.BO.get(command+".field").toString());
 				Map fieldMap = new HashMap();
@@ -73,17 +78,23 @@ public class MongoDBDAO implements IDAO{
 					}
 				}
 				wr = moColl.insert(fieldMap);
+				log.debug("【"+command+"】 : moColl.insert("+ fieldMap.toString() +")");
 			}else if(Pattern.matches(regeJsonObject,MongoDbBuilder.BO.get(command+".field").toString())){
 				String insertStr = MongoDbBuilder.BO.get(command+".field").toString();
 				if(insertStr.indexOf("#") > 0){
-					wr = moColl.insert(replaceParam(insertStr,ep.getParamMap()));
+					insertStr = replaceParam(insertStr,ep.getParamMap());
+					wr = moColl.insert(insertStr);
+					log.debug("【"+command+"】 : moColl.insert("+ insertStr +")");
 				}else{
 					wr = moColl.insert(insertStr);
+					log.debug("【"+command+"】 : moColl.insert("+ insertStr +")");
+
 				}
 			}else{
-				log.warn("insert操作：未知的field参数！");
+				log.warn("【"+command+"】 : insert操作：未知的field参数！");
 			}
 		}
+		
 		return wr==null?0:wr.getN();
 	}
 
@@ -109,13 +120,17 @@ public class MongoDBDAO implements IDAO{
 				String conditionStr = (String)MongoDbBuilder.BO.get(command+".condition");
 				if("_id".equals(conditionStr) && ep.getParam("_id") != null){
 					moUpdate = moColl.update(new ObjectId(ep.getParam("_id").toString()));
+					log.debug("【"+command+"】 : moColl.update(new Object('"+ ep.getParam("_id").toString() +"'))");
 				}else if(conditionStr.indexOf("#") > 0){
-					moUpdate = moColl.update(replaceParam(conditionStr,ep.getParamMap()));
+					conditionStr = replaceParam(conditionStr,ep.getParamMap());
+					moUpdate = moColl.update(conditionStr);
+					log.debug("【"+command+"】 : moColl.update("+ conditionStr +")");
 				}else{
 					moUpdate = moColl.update(conditionStr);
+					log.debug("【"+command+"】 : moColl.update("+ conditionStr +")");
 				}
 			}else{
-				log.warn("update操作：更新没有传入条件！");
+				log.warn("【"+command+"】 : update操作：更新没有传入条件！");
 			}
 			
 			if(MongoDbBuilder.BO.get(command+".field") != null){
@@ -152,10 +167,14 @@ public class MongoDBDAO implements IDAO{
 				conditionStr = (String)MongoDbBuilder.BO.get(command+".condition");
 				if("_id".equals(conditionStr) && ep.getParam("_id") != null){
 					moColl.remove(new ObjectId(ep.getParam("_id").toString()));
+					log.debug("【"+command+"】 : moColl.remove(new Object('"+ ep.getParam("_id").toString() +"'))");
 				}else if(conditionStr.indexOf("#") > 0){
-					moColl.remove(replaceParam(conditionStr,ep.getParamMap()));
+					conditionStr = replaceParam(conditionStr,ep.getParamMap());
+					moColl.remove(conditionStr);
+					log.debug("【"+command+"】 : moColl.remove("+ conditionStr +")");
 				}else{
 					moColl.remove(conditionStr);
+					log.debug("【"+command+"】 : moColl.remove("+ conditionStr +")");
 				}
 			}else{
 				moColl.remove();
@@ -171,7 +190,7 @@ public class MongoDBDAO implements IDAO{
 	@Override
 	public Object selectOne(EngineParameter ep) throws Exception {
 		//结果集
-		Map resultMap = new HashMap();
+		Map resultMap = null;
 		//处理参数
 		String command = ep.getCommand();
 		Object moObj = MongoDbBuilder.BO.get(command);
@@ -185,8 +204,10 @@ public class MongoDBDAO implements IDAO{
 			//求数量
 			if(MongoDbBuilder.BO.get(command+".count") != null){
 				if("all".equals(MongoDbBuilder.BO.get(command+".count").toString())){
+					log.debug("【"+command+"】 : moColl.count()");
 					return moColl.count();
 				}else{
+					log.debug("【"+command+"】 : moColl.count("+MongoDbBuilder.BO.get(command+".count").toString()+")");
 					return moColl.count(MongoDbBuilder.BO.get(command+".count").toString());
 				}
 			}
@@ -197,24 +218,37 @@ public class MongoDBDAO implements IDAO{
 				String conditionStr = (String)MongoDbBuilder.BO.get(command+".condition");
 				if("_id".equals(conditionStr) && ep.getParam("_id") != null){
 					moFind = moColl.findOne(Oid.withOid(ep.getParam("_id").toString()));
+					log.debug("【"+command+"】 : moColl.findOne(Oid.withOid"+ep.getParam("_id").toString()+"))");
 				}else if(conditionStr.indexOf("#") > 0){
-					moFind = moColl.findOne(replaceParam(conditionStr,ep.getParamMap()));
+					conditionStr = replaceParam(conditionStr,ep.getParamMap());
+					moFind = moColl.findOne(conditionStr);
+					log.debug("【"+command+"】 : moColl.findOne("+ conditionStr +")");
 				}else{
 					moFind = moColl.findOne(conditionStr);
+					log.debug("【"+command+"】 : moColl.findOne("+ conditionStr +")");
 				}
 			}else{
 				moFind = moColl.findOne();
+				log.debug("【"+command+"】 : moColl.findOne()");
 			}
 			
 			//输出字段
 			if(MongoDbBuilder.BO.get(command+".field") != null){
-				if(SEARCH_CATHE.get(command) == null){
-					SEARCH_CATHE.put(command, selectField(MongoDbBuilder.BO.get(command+".field").toString()));
+				String fieldStr = MongoDbBuilder.BO.get(command+".field").toString();
+				if(Pattern.matches(regeJsonArray,fieldStr)){
+					JSONArray fieldObjArr = JSONArray.fromObject(fieldStr);
+					JSONObject fieldJsonObj = new JSONObject();
+					for(int i =0;i<fieldObjArr.size();i++){
+						fieldJsonObj.put(fieldObjArr.get(i).toString(), 1);
+					}
+					fieldStr = fieldJsonObj.toString();
+				}else if(fieldStr.indexOf("#") > 0){
+					fieldStr = replaceParam(fieldStr,ep.getParamMap());
 				}
-				moFind = moFind.projection((String)SEARCH_CATHE.get(command));
+				moFind = moFind.projection(fieldStr);
+				log.debug("【"+command+"】 : Find.projection("+ fieldStr +")");
 			}
-			
-			resultMap = moFind.as(Map.class);
+			resultMap = moFind.as(Map.class)==null?new HashMap():moFind.as(Map.class);
 		}
 		
 		return resultMap;
@@ -238,12 +272,14 @@ public class MongoDBDAO implements IDAO{
 			Distinct moDistinct = null;
 			if(MongoDbBuilder.BO.get(command+".distinct") != null){
 				moDistinct = moColl.distinct(MongoDbBuilder.BO.get(command+".distinct").toString());
+				log.debug("【"+command+"】 : moColl.distinct("+ MongoDbBuilder.BO.get(command+".distinct").toString() +")");
 				if(MongoDbBuilder.BO.get(command+".condition") != null){
 					String conditionStr = (String)MongoDbBuilder.BO.get(command+".condition");
 					if(conditionStr.indexOf("#") > 0){
 						conditionStr = replaceParam(conditionStr,ep.getParamMap());
 					}
 					resultList = moDistinct.query(conditionStr).as(Object.class);
+					log.debug("【"+command+"】 : moDistinct.query("+ conditionStr +")");
 				}else{
 					resultList = moDistinct.as(Object.class);
 				}
@@ -256,46 +292,59 @@ public class MongoDBDAO implements IDAO{
 				String conditionStr = (String)MongoDbBuilder.BO.get(command+".condition");
 				if("_id".equals(conditionStr) && ep.getParam("_id") != null){
 					moFind = moColl.find(Oid.withOid(ep.getParam("_id").toString()));
+					log.debug("【"+command+"】 : moColl.find(Oid.withOid"+ep.getParam("_id").toString()+"))");
 				}else if(conditionStr.indexOf("#") > 0){
-					moFind = moColl.find(replaceParam(conditionStr,ep.getParamMap()));
+					conditionStr = replaceParam(conditionStr,ep.getParamMap());
+					moFind = moColl.find(conditionStr);
+					log.debug("【"+command+"】 : moColl.find("+ conditionStr +")");
 				}else{
 					moFind = moColl.find(conditionStr);
+					log.debug("【"+command+"】 : moColl.find("+ conditionStr +")");
 				}
 			}else{
 				moFind = moColl.find();
+				log.debug("【"+command+"】 : moColl.find()");
 			}
 
 			//数据排序
 			if(MongoDbBuilder.BO.get(command+".sort") != null){
 				moFind = moFind.sort(MongoDbBuilder.BO.get(command+".sort").toString());
+				log.debug("【"+command+"】 : Find.sort("+ MongoDbBuilder.BO.get(command+".sort").toString() +")");
 			}else{
 				if(ep.getParam("sort") != null){
 					String[] sortArr = ep.getParam("sort").toString().split(" ");
 					if(sortArr.length == 3){
 						moFind = moFind.sort("{\""+ sortArr[2]+"\":1}");
+						log.debug("【"+command+"】 : Find.sort({\""+ sortArr[2] +"\":1})");
 					}else if(sortArr.length == 4){
-						moFind = moFind.sort("{\""+ sortArr[2]+ "\":"+ ("ASC".equals(sortArr[3])?1:0) +"}");
+						moFind = moFind.sort("{\""+ sortArr[2]+ "\":"+ ("ASC".equals(sortArr[3])?1:-1) +"}");
+						log.debug("【"+command+"】 : Find.sort({\""+  sortArr[2]+ "\":"+ ("ASC".equals(sortArr[3])?1:-1) +"})");
 					}else{
-						log.warn(ep.getParam("sort").toString()+":排序参数不合法！");
+						log.warn("【"+command+"】 : "+ep.getParam("sort").toString()+":排序参数不合法！");
 					}
 				}
 			}
 			//跳过skip条数据
 			if(MongoDbBuilder.BO.get(command+".skip") != null){
 				moFind = moFind.skip(Integer.parseInt(MongoDbBuilder.BO.get(command+".skip").toString()));
+				log.debug("【"+command+"】 : Find.skip("+ Integer.parseInt(MongoDbBuilder.BO.get(command+".skip").toString()) +")");
 			}else if(ep.getParam("start") != null){
 				moFind = moFind.skip(Integer.parseInt(ep.getParam("start").toString()));
+				log.debug("【"+command+"】 : Find.skip("+ Integer.parseInt(ep.getParam("start").toString()) +")");
 			}
 			//limit条数据
 			if(MongoDbBuilder.BO.get(command+".limit") != null){
 				moFind = moFind.limit(Integer.parseInt(MongoDbBuilder.BO.get(command+".limit").toString()));
+				log.debug("【"+command+"】 : Find.limit("+ Integer.parseInt(MongoDbBuilder.BO.get(command+".limit").toString()) +")");
 			}else if(ep.getParam("limit") != null){
 				moFind = moFind.limit(Integer.parseInt(ep.getParam("limit").toString()));
+				log.debug("【"+command+"】 : Find.limit("+ Integer.parseInt(ep.getParam("limit").toString()) +")");
 			}
 			
 			//按照指定索引方式查询
 			if(MongoDbBuilder.BO.get(command+".hint") != null){
 				moFind = moFind.hint(MongoDbBuilder.BO.get(command+".hint").toString());
+				log.debug("【"+command+"】 : Find.hint("+ MongoDbBuilder.BO.get(command+".hint").toString() +")");
 			}
 			
 			//输出字段
@@ -312,6 +361,7 @@ public class MongoDBDAO implements IDAO{
 					fieldStr = replaceParam(fieldStr,ep.getParamMap());
 				}
 				moFind = moFind.projection(fieldStr);
+				log.debug("【"+command+"】 : Find.projection("+ fieldStr +")");
 			}
 			
 			Iterator<Map> iter = moFind.as(Map.class);
@@ -343,8 +393,10 @@ public class MongoDBDAO implements IDAO{
 					conditionStr = replaceParam(conditionStr,ep.getParamMap());
 				}
 				resultMap.put("total", moColl.count(conditionStr));
+				log.debug("【"+command+"】 : moColl.count("+ conditionStr +")");
 			}else{
 				resultMap.put("total", moColl.count());
+				log.debug("【"+command+"】 : moColl.count()");
 			}
 			resultMap.put("data", selectList(ep));
 		}
@@ -407,26 +459,37 @@ public class MongoDBDAO implements IDAO{
 	}
 	/**
 	 * 参数处理，将#变成数值
-	 * @param conditionStr
+	 * @param replaceStr
 	 * @param paramMap
 	 * @return
 	 */
-	private String replaceParam(String conditionStr,Map paramMap){
-		JSONObject jsonCondition = JSONObject.fromObject(conditionStr);
-		Iterator jsonIter = jsonCondition.keys();
+	private String replaceParam(String replaceStr,Map paramMap){
+		JSONObject jsonReplace = JSONObject.fromObject(replaceStr);
+		Iterator jsonIter = jsonReplace.keys();
+		List<String> deleteKeys = new ArrayList<String>();
+		
 		while(jsonIter.hasNext()){
 			String keyName = (String)jsonIter.next();
-			if(jsonCondition.get(keyName) instanceof String){
-				if("#".equals(jsonCondition.get(keyName))){
-					jsonCondition.put(keyName, paramMap.get(keyName));
+			if(jsonReplace.get(keyName) instanceof String){
+				if("#".equals(jsonReplace.get(keyName))){
+					if(paramMap.get(keyName) == null){
+						deleteKeys.add(keyName);
+					}else{
+						jsonReplace.put(keyName, paramMap.get(keyName));
+					}
 				}
-			}else if(jsonCondition.get(keyName) instanceof JSONObject){
-				jsonCondition.put(keyName,replaceParam(((JSONObject)jsonCondition.get(keyName)).toString(),paramMap));
+			}else if(jsonReplace.get(keyName) instanceof JSONObject){
+				jsonReplace.put(keyName,replaceParam(((JSONObject)jsonReplace.get(keyName)).toString(),paramMap));
 			}else{
 				log.warn(keyName + "参数替换时，无效参数！");
 			}
 		}
 		
-		return jsonCondition.toString();
+		//删除无用参数
+		for(int i=0;i<deleteKeys.size();i++){
+			jsonReplace.remove(deleteKeys.get(i));
+		}
+		
+		return jsonReplace.toString();
 	}
 }

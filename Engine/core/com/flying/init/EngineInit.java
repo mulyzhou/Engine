@@ -176,10 +176,10 @@ public class EngineInit {
 				e.printStackTrace();
 			}
 
-			String ip = pp.getProperty("IP") == null ? "127.0.0.1" : pp
-    				.getProperty("IP");
-            String port = pp.getProperty("PORT") == null ? "27017" : pp
-    				.getProperty("PORT");
+			String ip = pp.getProperty("ip") == null ? "127.0.0.1" : pp
+    				.getProperty("ip");
+            String port = pp.getProperty("port") == null ? "27017" : pp
+    				.getProperty("port");
             String dbName = pp.getProperty("dbname") == null ? StaticVariable.ALIAS : pp
     				.getProperty("dbname");
             int connectionsPerHost = pp.getProperty("connectionsPerHost") == null ? 50 : Integer.parseInt(pp
@@ -239,7 +239,7 @@ public class EngineInit {
 	 * @author zdf
 	 */
 	public static void webStart(){
-		String applicationContext = "config/applicationContext.xml";
+		String applicationContext = "config/applicationContext2MongoDB.xml";
 		
 		/* 构建spring运行环境 */
 		ApplicationContext wac = new ClassPathXmlApplicationContext(

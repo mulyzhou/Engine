@@ -54,7 +54,7 @@ public class RedisInterceptor extends AbstractInterceptor {
 		    	log.info("【redis成功执行，连接返回资源池】redis系统拦截器before方法执行结束。");
 			}
 		}else{
-			log.info("【redis未开启】");
+			log.info("【redis未开启】12");
 		}
 	}
 

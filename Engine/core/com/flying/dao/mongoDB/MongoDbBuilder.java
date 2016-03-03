@@ -1,26 +1,69 @@
 package com.flying.dao.mongoDB;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import com.flying.builder.BuilderUtil;
 import com.flying.dao.BaseDAO;
+import com.flying.init.Item;
 import com.flying.logging.Log;
 import com.flying.logging.LogFactory;
 import com.flying.util.FileUtil;
+import com.flying.util.FlyingUtil;
 
 public class MongoDbBuilder {
 	private static Log log = LogFactory.getLog(MongoDbBuilder.class);//日志
 
 	public static Map BO = new HashMap();
 	
-	public static void builder(){
-		String objName = "T_BASE_LOG";
+	public static void parse(){
+		log.debug("解析 nosql-map-import.xml 开始");
+
+		Document sqlImportDocument = FileUtil.readXml(Thread.currentThread().getContextClassLoader().getResourceAsStream("sql/nosql-map-import.xml"));
+		List sqlList = sqlImportDocument.selectNodes("/sqlMapConfig/sqlMapImport");
+		// 遍历，第一层sql/core/mongodb/sql-map-core.xml
+		Iterator sqlIter = sqlList.iterator();
+		while (sqlIter.hasNext()) {
+			Element itemElement = (Element) sqlIter.next();
+			
+			String resource = "";
+			if(FlyingUtil.validateData(itemElement.attribute("resource")) && FlyingUtil.validateData(itemElement.attribute("resource").getValue())){
+				resource = itemElement.attribute("resource").getValue().trim();
+				log.debug("解析： " + resource +" 开始");
+				// 遍历，第二层sql/core/mongodb/MONGODB_TEST.json
+				Document subSqlImportDocument = FileUtil.readXml(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource));
+				List subSqlList = subSqlImportDocument.selectNodes("/sqlMapImport/sqlMap");
+				Iterator subSqlIter = subSqlList.iterator();
+				while (subSqlIter.hasNext()) {
+					Element subItemElement = (Element) subSqlIter.next();
+					
+					if(FlyingUtil.validateData(subItemElement.attribute("resource")) && FlyingUtil.validateData(subItemElement.attribute("resource").getValue())){
+						builder(subItemElement.attribute("resource").getValue().trim());
+					}
+				}
+			}
+			log.debug("解析 "+ resource +" 结束");
+		}
+		
+	}
+	/**
+	 * 解析每个mongo对象的sql配置文件
+	 * @param resource mongo对象的地址
+	 */
+	private static void builder(String resource){
+		log.info(resource+"开始解析");
+		String objName = resource.substring(resource.lastIndexOf("/")+1, resource.indexOf(".json"));
 		InputStream in;// 文件输入流
 		try {
 			in = Thread.currentThread().getContextClassLoader().getResourceAsStream("sql/core/mongodb/"+ objName +".json");// 将文件编程输入流
@@ -33,7 +76,7 @@ public class MongoDbBuilder {
 				String jsonKey = (String) jsonIter.next();
 				Object keyObj = jsonObj.get(jsonKey);
 				
-				if(keyObj instanceof String && Pattern.matches("^\\{([\"|']{0,1}[\\w]+[\"|']{0,1}:[\"|']{0,1}[\\w]+[\"|']{0,1},{0,1})+\\}", ((String)keyObj).trim())){
+				if(keyObj instanceof String && Pattern.matches("^([\\w]+)|(\\{([\"|']{0,1}[\\w]+[\"|']{0,1}:[\"|']{0,1}[\\w]+[\"|']{0,1},{0,1})+\\})", ((String)keyObj).trim())){
 					BO.put(objName + "." + jsonKey + ".condition", keyObj);
 				}else if(keyObj instanceof JSONObject){
 					/** mongo的condition,sort、skip、limit、hint、count 开始 */
@@ -125,9 +168,13 @@ public class MongoDbBuilder {
 		}
 		return analysisStr.replaceAll(" ", "");
 	}
+	
 	public static void main(String[] args) {
-		builder();
+		parse();
 		System.out.println(BO);
 		//System.out.println(Pattern.matches("^\\[([\"|']{0,1}[\\w]+[\"|']{0,1},{0,1})+\\]$","[\"abc]"));
+		//String resource = "sql/core/mongodb/MONGODB_TEST.json";
+		//System.out.println(resource.substring(resource.lastIndexOf("/")+1, resource.indexOf(".json")));
+		
 	}
 }

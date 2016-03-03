@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlMapImport>
+	<sqlMap resource="sql/core/mongodb/MONGODB_TEST.json" />
+</sqlMapImport>

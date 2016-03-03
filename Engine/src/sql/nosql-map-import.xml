@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlMapConfig><!-- 基础数据子系统 -->
+	<sqlMapImport resource="sql/core/mongodb/sql-map-core.xml" />
+</sqlMapConfig>

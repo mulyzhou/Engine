@@ -1,0 +1,55 @@
+{
+    "selectAll":{
+        "field":[
+            "name",
+            "age",
+            "sex"
+        ]
+    },
+    "selectAllByNameDistinct":{
+         "distinct" : "age"
+    },
+     "selectAllByName":{
+        "field":[
+            "name",
+            "age",
+            "sex"
+        ],
+        "condition":{"name":"#"},
+        "sort": {"huji" :1}
+    },
+    "selectById" : "_id",
+    "selectByUuid" : {
+    	"condition" : {
+    		"uuid" : "#"
+    	}
+    },
+    "selectByName":{
+        "condition":{
+            "UUID":"#"
+        }
+    },
+    "updateById":{
+        "field":{"$set":{"name":"#","age":"#"}},
+        "condition":"_id"
+    },
+    "updateByName":{
+        "field":{"name" : "#","age":"#","address":"#"},
+        "condition":{"name":"#"}
+    },
+    "insertArray":{
+        "field":["uuid","name","age","sex","abc","address","huji"]
+    },
+    "insertJson":{
+        "field":{"uuid":"#","name":"#","age":"#","sex":"#","address":"#"}
+    },
+    "deleteById":{
+        "condition":"_id",
+    },
+    "deleteByName":{
+        "condition":{
+            "name":"#",
+            "age" : "#"
+        }
+    }
+}

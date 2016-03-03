@@ -29,7 +29,7 @@ public class AppTest {
 	public static void main(String[] args) {
 		EngineInit.appStart();
 		
-		MongoDbBuilder.builder();
+		MongoDbBuilder.parse();
 		
 		EngineParameter ep = new EngineParameter("T_BASE_FIELD.insert");
 		ep.putParam("id", 2);
@@ -38,7 +38,7 @@ public class AppTest {
 		ep.putParam("age", 123);
 		ep.putParam("address", "wuhan1");
 		ep.putParam("huji", "man2");
-		ep.putParam("_id", "566a67ea5c5e7e41c31e81ad");
+		//ep.putParam("_id", "566a67ea5c5e7e41c31e81ad");
 		//ep.putParam("start", 1);
 		//ep.putParam("limit", 2);
 		try {
